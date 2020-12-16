@@ -2,6 +2,7 @@ package ua.skidchenko.touristic_agency.controller;
 
 import ua.skidchenko.touristic_agency.controller.command.*;
 import ua.skidchenko.touristic_agency.controller.command.Exception;
+import ua.skidchenko.touristic_agency.service.impl.TourServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
@@ -21,6 +22,7 @@ public class Servlet extends HttpServlet {
         commands.put("register-user", new RegisterUser(new UserServiceImpl()));
         commands.put("exception" , new Exception());
         commands.put("locale" , new LocaleChange());
+        commands.put("display-tours" , new DisplayTours(new TourServiceImpl()));
     }
 
     @Override

@@ -9,8 +9,8 @@ public interface AdminTourService {
     Tour saveNewTour(TourDTO tourDTO);
 
     TourDTO getWaitingTourDTOById(Long tourId);
-
-    Tour updateTourAfterChanges(TourDTO tourDTO);
-
-    Tour markTourAsDeleted(Long tourId);
+//TODO
+//    Tour updateTourAfterChanges(TourDTO tourDTO);
+//TODO
+//    Tour markTourAsDeleted(Long tourId);
 }

@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
+import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.UserDao;
 
 import java.sql.Connection;
@@ -12,10 +13,11 @@ public class JDBCDaoFactory extends DaoFactory {
     public UserDao createUserDao() {
         return new JDBCUserDao(getConnection());
     }
-//    @Override
-//    public DriverDao createDriverDao() {
-//        return new JDBCDriverDao(getConnection());
-//    }
+
+    @Override
+    public TourDao createTourDao() {
+        return new JDBCTourDao(getConnection());
+    }
 
     private Connection getConnection() {
         try {

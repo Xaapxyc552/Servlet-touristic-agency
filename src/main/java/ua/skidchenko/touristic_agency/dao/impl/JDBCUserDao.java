@@ -5,9 +5,7 @@ import ua.skidchenko.touristic_agency.dao.rowmapper.impl.UserRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
 
-import javax.swing.tree.RowMapper;
 import java.sql.*;
-import java.util.List;
 import java.util.Optional;
 
 public class JDBCUserDao implements UserDao {
@@ -48,16 +46,6 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public User findById(int id) {
-        return null;
-    }
-
-    @Override
-    public List<User> findAll() {
-        return null;
-    }
-
-    @Override
     public void update(User entity) {
 
     }
@@ -92,7 +80,7 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public Optional<User> findByUsername(String username) {
-        User user = null;
+        User user;
         try (PreparedStatement ps = connection.prepareStatement(USER_BY_USERNAME)) {
             ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();

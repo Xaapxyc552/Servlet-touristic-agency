@@ -32,7 +32,8 @@ public class UserServiceImpl extends UserService {
 //    @Transactional
     public void chargeUserWallet(Long amountOfCharge, String username) {
 //        log.info("Starting recharging user`s account. Amount: " + amountOfCharge + ". Username: " + username);
-        User user = userDao.findByUsernameAndRole(username, Role.ROLE_USER).orElseThrow(() -> {
+        User user = userDao.findByUsernameAndRole(username, Role.ROLE_USER)
+                .<NotPresentInDatabaseException>orElseThrow(() -> {
 //            log.warn("User not present in DB. Recharging interrupted. Username: " + username);
             throw new NotPresentInDatabaseException("User not found in DB. Username: " + username);
         });

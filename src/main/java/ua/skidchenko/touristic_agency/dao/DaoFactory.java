@@ -12,8 +12,7 @@ public abstract class DaoFactory {
         if( daoFactory == null ){
             synchronized (DaoFactory.class){
                 if(daoFactory==null){
-                    DaoFactory temp = new JDBCDaoFactory();
-                    daoFactory = temp;
+                    daoFactory = new JDBCDaoFactory();
                 }
             }
         }
@@ -21,4 +20,6 @@ public abstract class DaoFactory {
     }
 
     public abstract UserDao createUserDao();
+
+    public abstract TourDao createTourDao();
 }
