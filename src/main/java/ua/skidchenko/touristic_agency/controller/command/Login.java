@@ -22,18 +22,20 @@ public class Login implements Command {
             return "/view/login.jsp";
         }
         Optional<User> userByUsername = userService.getUserByUsername(username);
-        if (userByUsername.isPresent() && userByUsername.get().getPassword().equals(password)) {
+        if (userByUsername.isPresent() && userByUsername.get().getPassword().   equals(password)) {
             User user = userByUsername.get();
             request.getSession().setAttribute("username", user.getUsername());
-            request.getSession().setAttribute("role", user.getRole());
+            request.getSession().setAttribute("firstname", user.getFirstname());
+            request.getSession().setAttribute("role", user.getRole().getAuthority());
             request.getSession().setAttribute("money", user.getMoney());
+            request.getSession().setAttribute("email", user.getEmail());
 
             switch (user.getRole()) {
                 case ROLE_USER:
-                    return "redirect:/app/user/personal_account/1";
+                    return "redirect:/app/user/personal-account";
                 case ROLE_ADMIN:
                 case ROLE_MANAGER:
-                    return "redirect:/app/manager/tours-operations/1";
+                    return "redirect:/app/manager/tours-operations";
             }
         }
         request.setAttribute("loginUnsuccessful", Boolean.TRUE);

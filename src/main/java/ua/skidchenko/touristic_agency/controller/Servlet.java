@@ -23,6 +23,7 @@ public class Servlet extends HttpServlet {
         commands.put("exception" , new Exception());
         commands.put("locale" , new LocaleChange());
         commands.put("display-tours" , new DisplayTours(new TourServiceImpl()));
+        commands.put("user/personal-account" , new PersonalAccount());
     }
 
     @Override
@@ -35,7 +36,7 @@ public class Servlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
-        processRequest(request, response);
+           processRequest(request, response);
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
