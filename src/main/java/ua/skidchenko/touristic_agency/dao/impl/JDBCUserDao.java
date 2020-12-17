@@ -46,13 +46,18 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public void update(User entity) {
-
+    public User update(User entity) {
+        return null;
     }
 
     @Override
     public void delete(int id) {
 
+    }
+
+    @Override
+    public Connection getConnection() {
+        return this.connection;
     }
 
     @Override

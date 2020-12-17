@@ -8,6 +8,7 @@ import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 import ua.skidchenko.touristic_agency.exceptions.UsernameExistsException;
 import ua.skidchenko.touristic_agency.service.UserService;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 //@Log4j2
@@ -38,7 +39,11 @@ public class UserServiceImpl extends UserService {
             throw new NotPresentInDatabaseException("User not found in DB. Username: " + username);
         });
         user.setMoney(user.getMoney() + amountOfCharge);
-        userDao.update(user);
+        try {
+            userDao.update(user);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private User buildUserFromDTO(UserDTO userDTO) {

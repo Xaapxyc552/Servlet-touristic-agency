@@ -6,6 +6,7 @@ import ua.skidchenko.touristic_agency.dao.rowmapper.impl.TourRowMapper;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 import ua.skidchenko.touristic_agency.entity.enums.TourType;
+import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
 import java.sql.*;
 import java.util.*;
@@ -13,11 +14,14 @@ import java.util.*;
 public class JDBCTourDao implements TourDao {
     private final Connection connection;
 
+    private static final String ENG_LANG_CODE = "en_GB";
+    private static final String UKR_LAN_CODE = "uk_UA";
+
     public JDBCTourDao(Connection connection) {
         this.connection = connection;
     }
 
-    private static final String FIND_ALL_BY_TOUR_TYPE_PAGEABLE_ASC_SORTING =
+    private static final String FIND_ALL_BY_TOUR_STATUS_PAGEABLE_ASC_SORTING =
             "select main_tour.id," +
                     "       main_tour.tour_status," +
                     "       main_tour.hotel_type," +
@@ -90,13 +94,29 @@ public class JDBCTourDao implements TourDao {
             "INSERT INTO touristic_agency.description_translation_mapping(tour_id, description, lang_code)" +
                     " values (?,?,?);";
 
+    private static final String UPDATE_TOUR = "update touristic_agency.tour" +
+            " set tour_status=?,price=?,hotel_type=?, burning=?, amount_of_persons=?" +
+            "where (id = ?);" +
+            "delete from touristic_agency.tour__tour_type where tour_id=?;" +
+            "update touristic_agency.name_translation_mapping" +
+            " set name=? " +
+            "where (name_id = ? AND lang_code = 'en_GB');" +
+            "update touristic_agency.name_translation_mapping" +
+            " set name=? " +
+            "where (name_id = ? AND lang_code = 'uk_UA');" +
+            "update touristic_agency.description_translation_mapping " +
+            " set description=? " +
+            " where (tour_id = ? AND lang_code = 'en_GB');" +
+            "update touristic_agency.description_translation_mapping " +
+            "set description=? " +
+            " where (tour_id = ? AND lang_code = 'uk_UA');";
 
     public List<Tour> findAllSortedPageableByTourStatus(OrderOfTours orderOfTours,
                                                         TourStatus tourStatus,
                                                         int pageSize,
                                                         int pageNum,
                                                         String sortingDirection) {
-        String sql = FIND_ALL_BY_TOUR_TYPE_PAGEABLE_ASC_SORTING + " " +
+        String sql = FIND_ALL_BY_TOUR_STATUS_PAGEABLE_ASC_SORTING + " " +
                 orderOfTours.getPropertyToSort() + " " + sortingDirection + ENDING;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tourStatus.name());
@@ -148,7 +168,7 @@ public class JDBCTourDao implements TourDao {
                 if (!generatedKeys.next()) {
                     throw new SQLException("Tour was not persisted!");
                 }
-                 newTourId = generatedKeys.getLong(1);
+                newTourId = generatedKeys.getLong(1);
             }
             try (PreparedStatement ps = connection.prepareStatement(INSERT_TOUR_TOUR_ID_RELATION)) {
                 for (TourType tourType : tour.getTourTypes()) {
@@ -158,15 +178,15 @@ public class JDBCTourDao implements TourDao {
                 }
             }
             try (PreparedStatement ps = connection.prepareStatement(INSERT_NAMES_INTO_TRANSLATION_TABLE)) {
-                for (Map.Entry<String,String> entry : tour.getName().entrySet()) {
+                for (Map.Entry<String, String> entry : tour.getName().entrySet()) {
                     ps.setLong(1, newTourId);
                     ps.setString(2, entry.getValue());
                     ps.setString(3, entry.getKey());
                     ps.executeUpdate();
                 }
             }
-            try(PreparedStatement ps = connection.prepareStatement(INSERT_DESCRIPTION_INTO_TRANSLATION_TABLE)) {
-                for (Map.Entry<String,String> entry : tour.getDescription().entrySet()) {
+            try (PreparedStatement ps = connection.prepareStatement(INSERT_DESCRIPTION_INTO_TRANSLATION_TABLE)) {
+                for (Map.Entry<String, String> entry : tour.getDescription().entrySet()) {
                     ps.setLong(1, newTourId);
                     ps.setString(2, entry.getValue());
                     ps.setString(3, entry.getKey());
@@ -190,8 +210,43 @@ public class JDBCTourDao implements TourDao {
     }
 
     @Override
-    public void update(Tour entity) {
-
+    public Tour update(Tour tour) throws SQLException {
+            connection.setAutoCommit(false);
+            findByIdAndTourStatus(tour.getId(), TourStatus.WAITING).<NotPresentInDatabaseException>orElseThrow(
+                    () -> {
+                        //log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
+                        throw new NotPresentInDatabaseException(
+                                "Waiting tour is not present id DB. Tour id: " + tour.getId());
+                    }
+            );
+            try (PreparedStatement ps = connection.prepareStatement(UPDATE_TOUR)) {
+                ps.setString(1, tour.getTourStatus().name());
+                ps.setLong(2, tour.getPrice());
+                ps.setInt(3, tour.getHotelType().ordinal());
+                ps.setBoolean(4, tour.isBurning());
+                ps.setInt(5, tour.getAmountOfPersons());
+                ps.setLong(6, tour.getId());
+                ps.setLong(7, tour.getId());
+                ps.setString(8, tour.getName().get(ENG_LANG_CODE));
+                ps.setLong(9, tour.getId());
+                ps.setString(10, tour.getName().get(UKR_LAN_CODE));
+                ps.setLong(11, tour.getId());
+                ps.setString(12, tour.getDescription().get(ENG_LANG_CODE));
+                ps.setLong(13, tour.getId());
+                ps.setString(14, tour.getDescription().get(UKR_LAN_CODE));
+                ps.setLong(15, tour.getId());
+                ps.executeUpdate();
+            }
+            try (PreparedStatement ps = connection.prepareStatement(INSERT_TOUR_TOUR_ID_RELATION)) {
+                for (TourType tourType : tour.getTourTypes()) {
+                    ps.setLong(1, tourType.getId());
+                    ps.setLong(2, tour.getId());
+                    ps.executeUpdate();
+                }
+            }
+            connection.commit();
+            connection.setAutoCommit(true);
+            return tour;
     }
 
     @Override
@@ -200,7 +255,12 @@ public class JDBCTourDao implements TourDao {
     }
 
     @Override
-    public void close() throws Exception {
+    public Connection getConnection() {
+        return this.connection;
+    }
 
+    @Override
+    public void close() throws Exception {
+        this.connection.close();
     }
 }

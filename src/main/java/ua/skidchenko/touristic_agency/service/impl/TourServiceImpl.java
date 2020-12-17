@@ -9,8 +9,10 @@ import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 import ua.skidchenko.touristic_agency.entity.enums.TourType;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
+import ua.skidchenko.touristic_agency.exceptions.TourNotPresentInDBException;
 import ua.skidchenko.touristic_agency.service.TourService;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,21 +81,36 @@ public class TourServiceImpl implements TourService {
 //        return tourToSave;
 //    }
 
-//    @Override
-//    @Transactional
-//    public Tour markTourAsDeleted(Long tourId) {
+    @Override
+    public Tour markTourAsDeleted(Long tourId) {
+        //TODO можно ли таким образом обеспечивать танзакционность?
 //        log.info("Marking tour as deleted. TourID: " + tourId);
-//        Tour tour = tourRepository.findByIdAndTourStatus(tourId, TourStatus.WAITING).orElseThrow(
-//                () -> {
+        try {
+            tourDao.getConnection().setAutoCommit(false);
+            Tour tour = tourDao.findByIdAndTourStatus(tourId, TourStatus.WAITING)
+                    .<TourNotPresentInDBException>orElseThrow(() -> {
 //                    log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
-//                    throw new TourNotPresentInDBException("Waiting tour is not present id DB. Tour id:" + tourId);
-//                }
-//        );
-//        tour.setTourStatus(TourStatus.DELETED);
-//        Tour save = tourRepository.save(tour);
+                                throw new TourNotPresentInDBException(
+                                        "Waiting tour is not present id DB. Tour id:" + tourId);
+                            }
+                    );
+            tour.setTourStatus(TourStatus.DELETED);
+            Tour save = tourDao.update(tour);
+            tourDao.getConnection().commit();
+            tourDao.getConnection().setAutoCommit(true);
 //        log.info("Tour marked as deleted. Tour id: " + tourId);
-//        return save;
-//    }
+            return save;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                tourDao.getConnection().rollback();
+                tourDao.getConnection().setAutoCommit(true);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            throw new NotPresentInDatabaseException("Exception during deleting tour.");
+        }
+    }
 
     private Tour buildNewTourFromTourDTO(TourDTO tourDTO) {
 //        log.info("Building new tour from DTO to save or to update edited tour. TourDTO: " + tourDTO.toString());

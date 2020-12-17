@@ -24,6 +24,7 @@ public class Servlet extends HttpServlet {
         commands.put("locale" , new LocaleChange());
         commands.put("display-tours" , new DisplayTours(new TourServiceImpl()));
         commands.put("user/personal-account" , new PersonalAccount());
+        commands.put("admin/tour/delete" , new DeleteTour(new TourServiceImpl()));
     }
 
     @Override

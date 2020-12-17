@@ -35,10 +35,10 @@ public class JDBCTourDaoTest extends TestCase {
         String ukrLangCode = "uk_UA";
         Map<String, String> names = new HashMap<>();
         Map<String, String> descriptions = new HashMap<>();
-            names.put(ukrLangCode, "Українське ім'я тестового туру");
-            names.put(engLangCode, "Engl test name");
-            descriptions.put(ukrLangCode, "Український опист тестового туру");
-            descriptions.put(engLangCode, "English test description");
+        names.put(ukrLangCode, "Українське ім'я тестового туру");
+        names.put(engLangCode, "Engl test name");
+        descriptions.put(ukrLangCode, "Український опист тестового туру");
+        descriptions.put(engLangCode, "English test description");
         Tour build = Tour.builder()
                 .name(names)
                 .description(descriptions)
@@ -51,5 +51,24 @@ public class JDBCTourDaoTest extends TestCase {
                 .build();
 
         tourDao.create(build);
+    }
+
+    public void testUpdate() {
+        TourDao tourDao = DaoFactory.getInstance().createTourDao();
+        Tour tour = tourDao.findByIdAndTourStatus((long) 1, TourStatus.WAITING).get();
+        tour.getName().put("en_GB", "Updated recently tour 1 english name");
+        tour.getName().put("uk_UA", "Нещодавно оновлене ім'я 1-го туру");
+        tour.getDescription().put("en_GB", "Updated recently tour 1 english description");
+        tour.getDescription().put("uk_UA", "Нещодавно оновлений опис 1-го туру");
+        tour.setTourTypes(Arrays.asList(
+                TourType.getInstanceByType(TourType.Type.RECREATION),
+                TourType.getInstanceByType(TourType.Type.SHOPPING)
+        ));
+        tour.setPrice(tour.getPrice() + 10000);
+        try {
+            tourDao.update(tour);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

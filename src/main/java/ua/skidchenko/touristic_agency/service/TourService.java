@@ -10,4 +10,5 @@ public interface TourService extends AdminTourService {
 
     List<Tour> getPagedWaitingToursOrderedByArgs(OrderOfTours orderOfTours, String direction, int currentPage);
 
+    Tour markTourAsDeleted(Long tourId);
 }
