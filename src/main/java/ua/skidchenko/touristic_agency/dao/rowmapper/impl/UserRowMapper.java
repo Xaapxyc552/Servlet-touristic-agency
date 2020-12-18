@@ -4,6 +4,7 @@ import ua.skidchenko.touristic_agency.dao.rowmapper.GenericRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
+import ua.skidchenko.touristic_agency.exceptions.RowMappingException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,9 +12,8 @@ import java.sql.SQLException;
 public class UserRowMapper implements GenericRowMapper<User> {
     @Override
     public User mapRow(ResultSet rs) {
-        User user = null;
         try {
-            user = User.builder()
+            return User.builder()
                     .email(rs.getString("email"))
                     .firstname(rs.getString("firstname"))
                     .id(rs.getLong("id"))
@@ -24,8 +24,7 @@ public class UserRowMapper implements GenericRowMapper<User> {
                     .password(rs.getString("password"))
                     .build();
         } catch (SQLException e) {
-            throw new NotPresentInDatabaseException("User not present id DB.",e);
+            throw new RowMappingException("Exception during mapping user",e);
         }
-        return user;
     }
 }

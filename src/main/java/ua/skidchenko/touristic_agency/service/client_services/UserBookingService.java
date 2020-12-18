@@ -2,13 +2,13 @@ package ua.skidchenko.touristic_agency.service.client_services;
 
 import ua.skidchenko.touristic_agency.entity.Check;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public interface UserBookingService {
-//    @Transactional
-//    Check bookTourByIdForUsername(Long tourId, String username);
+    Check bookTourByIdForUsername(Long tourId, String username);
 
-//    @Transactional
-//    Page<Check> findAllChecksByUsernameOrderByStatus(String username, int page);
+    List<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException;
 
-//    @Transactional
-//    Boolean cancelBookingByCheckId(Long checkId, String username);
+    Boolean cancelBookingByCheckId(Long checkId) throws SQLException;
 }

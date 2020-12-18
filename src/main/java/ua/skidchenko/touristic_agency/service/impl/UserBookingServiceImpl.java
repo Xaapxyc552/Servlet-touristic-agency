@@ -1,134 +1,120 @@
-//package ua.skidchenko.touristic_agency.service.impl;
-//
-//import lombok.extern.log4j.Log4j2;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//import ua.skidchenko.touristic_agency.entity.Check;
-//import ua.skidchenko.touristic_agency.entity.Tour;
-//import ua.skidchenko.touristic_agency.entity.User;
-//import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
-//import ua.skidchenko.touristic_agency.entity.enums.Role;
-//import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
-//import ua.skidchenko.touristic_agency.exceptions.ForbiddenOperationExceprtion;
-//import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
-//import ua.skidchenko.touristic_agency.repository.CheckRepository;
-//import ua.skidchenko.touristic_agency.repository.TourRepository;
-//import ua.skidchenko.touristic_agency.repository.UserRepository;
-//import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
-//
-//import java.util.Collections;
-//
-//
-////@Log4j2
-//public class UserBookingServiceImpl implements UserBookingService {
-//
-////    @Value("${page.size}")
-//    private int pageSize;
-//
-//    final
-//    TourRepository tourRepository;
-//
-//    final
-//    UserRepository userRepository;
-//
-//    final
-//    CheckRepository checkRepository;
-//
-//    public UserBookingServiceImpl(TourRepository tourRepository,
-//                                  UserRepository userRepository,
-//                                  CheckRepository checkRepository) {
-//        this.tourRepository = tourRepository;
-//        this.userRepository = userRepository;
-//        this.checkRepository = checkRepository;
-//    }
-//
-//    @Override
+package ua.skidchenko.touristic_agency.service.impl;
+
+
+import ua.skidchenko.touristic_agency.dao.CheckDao;
+import ua.skidchenko.touristic_agency.dao.DaoFactory;
+import ua.skidchenko.touristic_agency.dao.TourDao;
+import ua.skidchenko.touristic_agency.dao.UserDao;
+import ua.skidchenko.touristic_agency.entity.Check;
+import ua.skidchenko.touristic_agency.entity.Tour;
+import ua.skidchenko.touristic_agency.entity.User;
+import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
+import ua.skidchenko.touristic_agency.entity.enums.Role;
+import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
+import ua.skidchenko.touristic_agency.exceptions.ForbiddenOperationExceprtion;
+import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
+import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+
+
+//@Log4j2
+public class UserBookingServiceImpl implements UserBookingService {
+
+    private final int pageSize=5;
+
+    private final CheckDao checkDao = DaoFactory.getInstance().createCheckDao();
+    private final UserDao userDao = DaoFactory.getInstance().createUserDao();
+    private final TourDao tourDao = DaoFactory.getInstance().createTourDao();
+
+    @Override
 //    @Transactional
-//    public Check bookTourByIdForUsername(Long tourId, String username) {
+    //TODO реализовать create в checkDao,Transactional
+    public Check bookTourByIdForUsername(Long tourId, String username) {
 //        log.info("Booking tour for user by username and tourId. " +
 //                "Username: " + username + ". Tour ID:" + tourId + ".");
-//        Tour tour = getTourFromRepositoryByIdAndStatus(tourId, TourStatus.WAITING);
-//        User user = getUserFromRepository(username);
-//
-//        if (user.getMoney().compareTo(tour.getPrice()) < 0) {
+        Tour tour = getTourFromRepositoryByIdAndStatus(tourId, TourStatus.WAITING);
+        User user = getUserFromRepository(username);
+
+        if (user.getMoney().compareTo(tour.getPrice()) < 0) {
 //            log.warn("User has not enough money");
-//            throw new IllegalArgumentException("User has not enough money");
-//        }
-//        user.setMoney(user.getMoney() - tour.getPrice());
-//        tour.setTourStatus(TourStatus.REGISTERED);
-//        Check bookingCheck = Check.builder()
-//                .status(
-//                        CheckStatus.getInstanceByEnum(CheckStatus.Status.WAITING_FOR_CONFIRM)
-//                )
-//                .tour(tour)
-//                .totalPrice(tour.getPrice())
-//                .user(user)
-//                .build();
+            throw new IllegalArgumentException("User has not enough money");
+        }
+        user.setMoney(user.getMoney() - tour.getPrice());
+        tour.setTourStatus(TourStatus.REGISTERED);
+        Check bookingCheck = Check.builder()
+                .status(
+                        CheckStatus.getInstanceByEnum(CheckStatus.Status.WAITING_FOR_CONFIRM)
+                )
+                .tour(tour)
+                .totalPrice(tour.getPrice())
+                .user(user)
+                .build();
 //        log.info("Finished creation check:" + bookingCheck.toString());
-//        return checkRepository.save(bookingCheck);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public Page<Check> findAllChecksByUsernameOrderByStatus(String username, int page) {
+        return checkDao.create(bookingCheck);
+    }
+
+    @Override
+    public List<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException {
 //        log.info("Retrieving paged user's checks ordered by status. Username: " +
 //                "" + username + ". Page: " + page);
-//        User byUsername = getUserFromRepository(username);
-//        PageRequest pr = PageRequest.of(page, pageSize);
-//        return checkRepository.findAllByUserOrderByStatus(byUsername, pr);
-//    }
-//
-//    @Override
+        try {
+            return checkDao.findAllByUserOrderByStatus(username, pageSize,page);
+        } catch (SQLException e) {
+            throw new SQLException("Exception during retrieving checks from DB.",e);
+        }
+    }
+
+    @Override
 //    @Transactional
-//    public Boolean cancelBookingByCheckId(Long checkId, String username) {
+    //TODO реализовать update в checkDao,Transactional
+    public Boolean cancelBookingByCheckId(Long checkId) throws SQLException {
 //        log.info("Canceling booking by checkId. Check ID: " + checkId.toString());
-//        Check checkFromDB = getCheckFromRepositoryByIdAndStatus(checkId,
-//                CheckStatus.getInstanceByEnum(CheckStatus.Status.WAITING_FOR_CONFIRM));
-//        User userFromDB = checkFromDB.getUser();
-//        if (!userFromDB.getUsername().equals(username)) {
-//            throw new ForbiddenOperationExceprtion("Username of check's owner not equals to your.");
-//        }
-//        checkFromDB.getTour().setTourStatus(TourStatus.WAITING);
-//        userFromDB.setMoney(
-//                userFromDB.getMoney() + checkFromDB.getTotalPrice()
-//        );
-//        checkFromDB.setStatus(CheckStatus.getInstanceByEnum(
-//                CheckStatus.Status.CANCELED)
-//        );
-//        checkRepository.save(checkFromDB);
-//        return Boolean.TRUE;
-//    }
-//
-//    private Tour getTourFromRepositoryByIdAndStatus(Long tourId, TourStatus status) {
-//        return tourRepository.findByIdAndTourStatus(tourId, status)
-//                .orElseThrow(() -> {
+        Check checkFromDB = getCheckFromRepositoryByIdAndStatus(checkId,
+                CheckStatus.getInstanceByEnum(CheckStatus.Status.WAITING_FOR_CONFIRM));
+        User userFromDB = checkFromDB.getUser();
+        checkFromDB.getTour().setTourStatus(TourStatus.WAITING);
+        userFromDB.setMoney(
+                userFromDB.getMoney() + checkFromDB.getTotalPrice()
+        );
+        checkFromDB.setStatus(CheckStatus.getInstanceByEnum(
+                CheckStatus.Status.CANCELED)
+        );
+        tourDao.update(checkFromDB.getTour());
+        userDao.update(checkFromDB.getUser());
+        checkDao.update(checkFromDB);
+        return Boolean.TRUE;
+    }
+
+    private Tour getTourFromRepositoryByIdAndStatus(Long tourId, TourStatus status) {
+        return tourDao.findByIdAndTourStatus(tourId, status)
+                .orElseThrow(() -> {
 //                            log.warn("Tour not presented in Database. Tour id: " + tourId);
-//                            return new NotPresentInDatabaseException(
-//                                    "Tour not presented in Database. Tour id: " + tourId);
-//                        }
-//                );
-//    }
-//
-//    private User getUserFromRepository(String username) {
-//        return userRepository.findByUsernameAndRole(username, Role.ROLE_USER)
-//                .orElseThrow(() -> {
+                            return new NotPresentInDatabaseException(
+                                    "Tour not presented in Database. Tour id: " + tourId);
+                        }
+                );
+    }
+
+    private User getUserFromRepository(String username) {
+        return userDao.findByUsernameAndRole(username, Role.ROLE_USER)
+                .orElseThrow(() -> {
 //                            log.warn("User not presented in Database. Username: " + username);
-//                            return new NotPresentInDatabaseException(
-//                                    "User not presented in Database. Username: " + username);
-//                        }
-//                );
-//    }
-//
-//    private Check getCheckFromRepositoryByIdAndStatus(Long checkId, CheckStatus tourStatus) {
-//        return checkRepository.findByIdAndStatusIn(checkId, Collections.singletonList(tourStatus))
-//                .orElseThrow(() -> {
+                            return new NotPresentInDatabaseException(
+                                    "User not presented in Database. Username: " + username);
+                        }
+                );
+    }
+
+    private Check getCheckFromRepositoryByIdAndStatus(Long checkId, CheckStatus tourStatus) {
+        return checkDao.findByIdAndStatus(checkId, tourStatus)
+                .orElseThrow(() -> {
 //                            log.warn("Check not presented in Database. Check ID: " + checkId);
-//                            return new NotPresentInDatabaseException(
-//                                    "Check not presented in Database. Check ID: " + checkId);
-//                        }
-//                );
-//    }
-//}
+                            return new NotPresentInDatabaseException(
+                                    "Check not presented in Database. Check ID: " + checkId);
+                        }
+                );
+    }
+}

@@ -8,50 +8,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-//@Entity
-//@Table(name = "tour")
+
 public class Tour {
-
     private Long id;
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "name_translation_mapping",
-//            joinColumns = {@JoinColumn(name = "name_id", referencedColumnName = "id")})
-//    @MapKeyColumn(name = "lang_code")
-//    @Column(name = "name")
     private Map<String, String> name;
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "description_translation_mapping",
-//            joinColumns = {@JoinColumn(name = "tour_id", referencedColumnName = "id")})
-//    @MapKeyColumn(name = "lang_code")
-//    @Column(name = "description")
     private Map<String, String> description;
-
-//    @Column(nullable = false)
     private boolean burning;
-
-//    @Column(name = "amount_of_persons", nullable = false)
     private int amountOfPersons;
-
-//    @Column(nullable = false)
     private Long price;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "tour_status")
     private TourStatus tourStatus;
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "tour__tour_type",
-//            joinColumns = @JoinColumn(name = "tour_id"),
-//            inverseJoinColumns = @JoinColumn(name = "tour_type_id"))
     private List<TourType> tourTypes;
-
-//    @Enumerated(EnumType.ORDINAL)
-//    @Column(name = "hotel_type")
     private HotelType hotelType;
 
-    public Tour(Long id, Map<String, String> name, Map<String, String> description, boolean burning, int amountOfPersons, Long price, TourStatus tourStatus, List<TourType> tourTypes, HotelType hotelType) {
+    public Tour(Long id,
+                Map<String, String> name
+            , Map<String, String> description,
+                boolean burning, int amountOfPersons,
+                Long price, TourStatus tourStatus,
+                List<TourType> tourTypes,
+                HotelType hotelType) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -164,7 +139,11 @@ public class Tour {
     }
 
     public String toString() {
-        return "Tour(id=" + this.getId() + ", name=" + this.getName() + ", burning=" + this.isBurning() + ", amountOfPersons=" + this.getAmountOfPersons() + ", price=" + this.getPrice() + ", tourStatus=" + this.getTourStatus() + ", hotelType=" + this.getHotelType() + ")";
+        return "Tour(id=" + this.getId() + ", name=" + this.getName() +
+                ", burning=" + this.isBurning() + ", amountOfPersons=" +
+                this.getAmountOfPersons() + ", price=" + this.getPrice() +
+                ", tourStatus=" + this.getTourStatus() + ", hotelType=" +
+                this.getHotelType() + ")";
     }
 
     public static class TourBuilder {

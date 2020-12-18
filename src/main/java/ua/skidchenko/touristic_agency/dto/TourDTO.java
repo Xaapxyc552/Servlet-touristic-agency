@@ -147,7 +147,11 @@ public class TourDTO {
     }
 
     public String toString() {
-        return "TourDTO(id=" + this.getId() + ", name=" + this.getName() + ", description=" + this.getDescription() + ", amountOfPersons=" + this.getAmountOfPersons() + ", price=" + this.getPrice() + ", tourTypes=" + this.getTourTypes() + ", hotelType=" + this.getHotelType() + ", burning=" + this.getBurning() + ")";
+        return "TourDTO(id=" + this.getId() + ", name=" + this.getName() +
+                ", description=" + this.getDescription() + ", amountOfPersons=" +
+                this.getAmountOfPersons() + ", price=" + this.getPrice() +
+                ", tourTypes=" + this.getTourTypes() + ", hotelType=" + this.getHotelType() +
+                ", burning=" + this.getBurning() + ")";
     }
 
     public static class TourDTOBuilder {
@@ -208,7 +212,10 @@ public class TourDTO {
         }
 
         public String toString() {
-            return "TourDTO.TourDTOBuilder(id=" + this.id + ", name=" + this.name + ", description=" + this.description + ", amountOfPersons=" + this.amountOfPersons + ", price=" + this.price + ", tourTypes=" + this.tourTypes + ", hotelType=" + this.hotelType + ", burning=" + this.burning + ")";
+            return "TourDTO.TourDTOBuilder(id=" + this.id + ", name=" + this.name +
+                    ", description=" + this.description + ", amountOfPersons=" +
+                    this.amountOfPersons + ", price=" + this.price + ", tourTypes=" +
+                    this.tourTypes + ", hotelType=" + this.hotelType + ", burning=" + this.burning + ")";
         }
     }
 }

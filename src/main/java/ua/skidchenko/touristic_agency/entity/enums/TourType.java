@@ -9,22 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
-//@Entity
-//@Table(name = "tour_type")
 public class TourType {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "type")
     private Type type;
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "tour__tour_type",
-//            joinColumns = @JoinColumn(name = "tour_type_id"),
-//            inverseJoinColumns = @JoinColumn(name = "tour_id"))
     private List<Tour> tour;
 
     public void setId(Long id) {
@@ -36,7 +24,6 @@ public class TourType {
                 map(el -> TourType.getInstanceByType(Enum.valueOf(Type.class, el)))
                 .collect(Collectors.toList());
     }
-
 
     public TourType(Long id, Type type, List<Tour> tour) {
         this.id = id;

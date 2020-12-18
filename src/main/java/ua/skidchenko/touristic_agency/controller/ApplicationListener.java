@@ -11,7 +11,6 @@ public class ApplicationListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         Locale.setDefault(new Locale("en"));
-//        Locale.setDefault(new Locale("uk","UA"));
     }
 
 

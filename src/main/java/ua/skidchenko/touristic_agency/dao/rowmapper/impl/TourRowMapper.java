@@ -8,6 +8,7 @@ import ua.skidchenko.touristic_agency.entity.enums.Role;
 import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 import ua.skidchenko.touristic_agency.entity.enums.TourType;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
+import ua.skidchenko.touristic_agency.exceptions.RowMappingException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +46,7 @@ public class TourRowMapper implements GenericRowMapper<Tour> {
                     )
                     .build();
         } catch (SQLException e) {
-            throw new NotPresentInDatabaseException("User not present id DB.", e);
+            throw new RowMappingException("Exception during mapping tour",e);
         }
     }
 }

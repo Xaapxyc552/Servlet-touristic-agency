@@ -4,25 +4,12 @@ import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
 
 import java.util.Objects;
 
-//@Entity
-//@Table(name = "check")
 public class Check {
 
     private Long id;
-//
-//    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "tour_id")
     private Tour tour;
-
-//    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
-//    @JoinColumn(name = "user_id")
     private User user;
-
-//    @Column(name = "total_price")
     private Long totalPrice;
-
-//    @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "status_id")
     private CheckStatus status;
 
     public Check(Long id, Tour tour, User user, Long totalPrice, CheckStatus status) {
@@ -84,7 +71,9 @@ public class Check {
     }
 
     public String toString() {
-        return "Check(id=" + this.getId() + ", tour=" + this.getTour() + ", user=" + this.getUser() + ", totalPrice=" + this.getTotalPrice() + ", status=" + this.getStatus() + ")";
+        return "Check(id=" + this.getId() + ", tour=" + this.getTour() +
+                ", user=" + this.getUser() + ", totalPrice=" + this.getTotalPrice() +
+                ", status=" + this.getStatus() + ")";
     }
 
     @Override
@@ -130,6 +119,9 @@ public class Check {
         }
 
         public CheckBuilder totalPrice(Long totalPrice) {
+            if (totalPrice < 0) {
+                throw new IllegalArgumentException("Total price cannot be negative!");
+            }
             this.totalPrice = totalPrice;
             return this;
         }

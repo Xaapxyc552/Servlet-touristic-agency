@@ -24,6 +24,10 @@ public class JDBCUserDao implements UserDao {
     private static final String USER_BY_USERNAME =
             "SELECT * FROM touristic_agency.user WHERE (username=?);";
 
+    private static final String UPDATE_USER =
+            "UPDATE touristic_agency.user SET username=?, password=?, email=?,firstname=?, role=?, enabled=?, money=?" +
+                    " where touristic_agency.user.id=?";
+
     @Override
     public User create(User entity) {
         try (PreparedStatement ps = connection.prepareStatement(USER_CREATE, Statement.RETURN_GENERATED_KEYS)) {
@@ -47,7 +51,21 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public User update(User entity) {
-        return null;
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_USER)) {
+            ps.setString(1, entity.getUsername());
+            ps.setString(2, entity.getPassword());
+            ps.setString(3, entity.getEmail());
+            ps.setString(4, entity.getFirstname());
+            ps.setString(5, entity.getRole().name());
+            ps.setBoolean(6, entity.isEnabled());
+            ps.setLong(7, entity.getMoney());
+            ps.setLong(8, entity.getId());
+            ps.executeUpdate();
+            return entity;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return entity;
     }
 
     @Override

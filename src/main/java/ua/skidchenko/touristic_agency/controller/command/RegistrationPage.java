@@ -5,7 +5,7 @@ import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class Registration implements Command {
+public class RegistrationPage implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {

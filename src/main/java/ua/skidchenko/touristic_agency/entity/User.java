@@ -5,32 +5,14 @@ import ua.skidchenko.touristic_agency.entity.enums.Role;
 
 import java.util.Objects;
 
-//@Entity
-//@Table(name = "user")
 public class User {
-
-
     private Long id;
-
-//    @Column(name = "username", unique = true, nullable = false, length = 30)
     private String username;
-
-//    @Column(name = "password", nullable = false, length = 60)
     private String password;
-
-//    @Enumerated(value = EnumType.STRING)
     private Role role;
-
-//    @Column(name = "email", unique = true, length = 60)
     private String email;
-
-//    @Column(name = "firstname", length = 20)
     private String firstname;
-
-//    @Column(name = "enabled", nullable = false)
     private boolean enabled;
-
-//    @Column(name = "money", nullable = false)
     private Long money;
 
     public User(Long id, String username, String password, Role role, String email, String firstname, boolean enabled, Long money) {

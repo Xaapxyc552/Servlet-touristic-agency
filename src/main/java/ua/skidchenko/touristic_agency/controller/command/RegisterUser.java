@@ -14,9 +14,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RegisterUser implements Command {
-    private UserService userService;
+    private final UserService userService;
 
-    private static String REGISTRATION_PAGE_PATH = "/view/registration.jsp";
+    private static final String REGISTRATION_PAGE_PATH = "/view/registration.jsp";
     public RegisterUser(UserServiceImpl userService) {
         this.userService = userService;
     }
@@ -37,9 +37,8 @@ public class RegisterUser implements Command {
                     .collect(Collectors.toList()));
             return REGISTRATION_PAGE_PATH;
         }
-        User registeredUser;
         try {
-            registeredUser = userService.saveUser(userDTO);
+            userService.saveUser(userDTO);
             request.setAttribute("userRegistrationMessage", true);
         } catch (UsernameExistsException existsException) {
             request.setAttribute("userRegistrationMessage", false);

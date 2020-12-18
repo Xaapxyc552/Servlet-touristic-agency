@@ -4,15 +4,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-
-//@Entity
-//@Table(name = "check_status")
 public class CheckStatus {
 //    @Id
     private Long id;
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "status")
     private Status status;
 
     public void setId(Long id) {

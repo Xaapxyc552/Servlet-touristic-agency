@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.UserDao;
@@ -9,6 +10,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JDBCDaoFactory extends DaoFactory {
+    @Override
+    public CheckDao createCheckDao() {
+        return new JDBCCheckDao(getConnection());
+    }
+
     @Override
     public UserDao createUserDao() {
         return new JDBCUserDao(getConnection());

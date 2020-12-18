@@ -1,8 +1,8 @@
 package ua.skidchenko.touristic_agency.controller;
 
 import ua.skidchenko.touristic_agency.controller.command.*;
-import ua.skidchenko.touristic_agency.controller.command.Exception;
 import ua.skidchenko.touristic_agency.service.impl.TourServiceImpl;
+import ua.skidchenko.touristic_agency.service.impl.UserBookingServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
@@ -18,13 +18,14 @@ public class Servlet extends HttpServlet {
     public void init(){
         commands.put("logout", new LogOut());
         commands.put("login", new Login(new UserServiceImpl()));
-        commands.put("registration", new Registration());
+        commands.put("forbidden", new ForbiddenPage());
+        commands.put("registration", new RegistrationPage());
         commands.put("register-user", new RegisterUser(new UserServiceImpl()));
-        commands.put("exception" , new Exception());
         commands.put("locale" , new LocaleChange());
         commands.put("display-tours" , new DisplayTours(new TourServiceImpl()));
-        commands.put("user/personal-account" , new PersonalAccount());
+        commands.put("user/personal-account" , new PersonalAccount(new UserBookingServiceImpl()));
         commands.put("admin/tour/delete" , new DeleteTour(new TourServiceImpl()));
+        commands.put("user/remove-booking" , new RemoveBookingFromCheck(new UserBookingServiceImpl()));
     }
 
     @Override

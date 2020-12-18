@@ -121,7 +121,7 @@ public class JDBCTourDao implements TourDao {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tourStatus.name());
             ps.setInt(2, pageSize);
-            ps.setInt(3, pageNum);
+            ps.setInt(3, pageNum * pageSize);
             ResultSet resultSet = ps.executeQuery();
             TourRowMapper tourRowMapper = new TourRowMapper();
             List<Tour> toursFromDb = new ArrayList<>();
@@ -211,42 +211,42 @@ public class JDBCTourDao implements TourDao {
 
     @Override
     public Tour update(Tour tour) throws SQLException {
-            connection.setAutoCommit(false);
-            findByIdAndTourStatus(tour.getId(), TourStatus.WAITING).<NotPresentInDatabaseException>orElseThrow(
-                    () -> {
-                        //log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
-                        throw new NotPresentInDatabaseException(
-                                "Waiting tour is not present id DB. Tour id: " + tour.getId());
-                    }
-            );
-            try (PreparedStatement ps = connection.prepareStatement(UPDATE_TOUR)) {
-                ps.setString(1, tour.getTourStatus().name());
-                ps.setLong(2, tour.getPrice());
-                ps.setInt(3, tour.getHotelType().ordinal());
-                ps.setBoolean(4, tour.isBurning());
-                ps.setInt(5, tour.getAmountOfPersons());
-                ps.setLong(6, tour.getId());
-                ps.setLong(7, tour.getId());
-                ps.setString(8, tour.getName().get(ENG_LANG_CODE));
-                ps.setLong(9, tour.getId());
-                ps.setString(10, tour.getName().get(UKR_LAN_CODE));
-                ps.setLong(11, tour.getId());
-                ps.setString(12, tour.getDescription().get(ENG_LANG_CODE));
-                ps.setLong(13, tour.getId());
-                ps.setString(14, tour.getDescription().get(UKR_LAN_CODE));
-                ps.setLong(15, tour.getId());
+        connection.setAutoCommit(false);
+        findByIdAndTourStatus(tour.getId(), TourStatus.WAITING).<NotPresentInDatabaseException>orElseThrow(
+                () -> {
+                    //log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
+                    throw new NotPresentInDatabaseException(
+                            "Waiting tour is not present id DB. Tour id: " + tour.getId());
+                }
+        );
+        try (PreparedStatement ps = connection.prepareStatement(UPDATE_TOUR)) {
+            ps.setString(1, tour.getTourStatus().name());
+            ps.setLong(2, tour.getPrice());
+            ps.setInt(3, tour.getHotelType().ordinal());
+            ps.setBoolean(4, tour.isBurning());
+            ps.setInt(5, tour.getAmountOfPersons());
+            ps.setLong(6, tour.getId());
+            ps.setLong(7, tour.getId());
+            ps.setString(8, tour.getName().get(ENG_LANG_CODE));
+            ps.setLong(9, tour.getId());
+            ps.setString(10, tour.getName().get(UKR_LAN_CODE));
+            ps.setLong(11, tour.getId());
+            ps.setString(12, tour.getDescription().get(ENG_LANG_CODE));
+            ps.setLong(13, tour.getId());
+            ps.setString(14, tour.getDescription().get(UKR_LAN_CODE));
+            ps.setLong(15, tour.getId());
+            ps.executeUpdate();
+        }
+        try (PreparedStatement ps = connection.prepareStatement(INSERT_TOUR_TOUR_ID_RELATION)) {
+            for (TourType tourType : tour.getTourTypes()) {
+                ps.setLong(1, tourType.getId());
+                ps.setLong(2, tour.getId());
                 ps.executeUpdate();
             }
-            try (PreparedStatement ps = connection.prepareStatement(INSERT_TOUR_TOUR_ID_RELATION)) {
-                for (TourType tourType : tour.getTourTypes()) {
-                    ps.setLong(1, tourType.getId());
-                    ps.setLong(2, tour.getId());
-                    ps.executeUpdate();
-                }
-            }
-            connection.commit();
-            connection.setAutoCommit(true);
-            return tour;
+        }
+        connection.commit();
+        connection.setAutoCommit(true);
+        return tour;
     }
 
     @Override

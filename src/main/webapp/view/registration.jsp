@@ -14,7 +14,6 @@
 </head>
 <body>
 <jsp:include page="common/common.jsp"/>
-    <a href="${pageContext.request.contextPath}/view/index.jsp">Index</a>
     <fmt:message key="message.user.registration.page.header"/>
     <h1>
         <fmt:message key="form.header"/>
@@ -26,11 +25,11 @@
     </c:forEach>
 </c:if>
 
-<c:if test="${requestScope.get('userRegistrationMessage') == true}">
+<c:if test="${requestScope.get('userRegistrationMessage') == false}">
     <fmt:message key="user.registered"/>
 </c:if>
 
-<c:if test="${requestScope.get('userRegistrationMessage') == false}">
+<c:if test="${requestScope.get('userRegistrationMessage') == true}">
     <fmt:message key="user.not_registered"/>
 </c:if>
 

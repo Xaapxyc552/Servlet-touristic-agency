@@ -1,10 +1,12 @@
 package ua.skidchenko.touristic_agency.controller.command;
 
+import ua.skidchenko.touristic_agency.service.TourService;
+
 import javax.servlet.http.HttpServletRequest;
 
-public class Exception implements Command {
+public class ForbiddenPage implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        throw new RuntimeException("Generated exception");
+        return "/view/forbidden.jsp";
     }
 }

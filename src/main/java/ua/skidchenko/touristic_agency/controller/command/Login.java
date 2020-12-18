@@ -15,6 +15,7 @@ public class Login implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
+        request.getSession().invalidate();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         System.out.println(username + " " + password);
