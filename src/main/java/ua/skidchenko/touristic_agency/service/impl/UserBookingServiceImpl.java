@@ -47,20 +47,8 @@ public class UserBookingServiceImpl implements UserBookingService {
     }
 
     @Override
-//    @Transactional
-    //TODO реализовать update в checkDao,Transactional (можно создавать новое ДАО на каждый вызов транзакционного метода)
     public void cancelBookingByCheckId(Long checkId) throws SQLException {
 //        log.info("Canceling booking by checkId. Check ID: " + checkId.toString());
         checkDao.cancelBookingByCheckId(checkId);
-    }
-
-    private Check getCheckFromRepositoryByIdAndStatus(Long checkId, CheckStatus tourStatus) {
-        return checkDao.findByIdAndStatus(checkId, tourStatus)
-                .orElseThrow(() -> {
-//                            log.warn("Check not presented in Database. Check ID: " + checkId);
-                            return new NotPresentInDatabaseException(
-                                    "Check not presented in Database. Check ID: " + checkId);
-                        }
-                );
     }
 }

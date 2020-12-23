@@ -24,6 +24,10 @@ public class JDBCUserDao implements UserDao {
             "UPDATE touristic_agency.user SET username=?, password=?, email=?,firstname=?, role=?, enabled=?, money=?" +
                     " where touristic_agency.user.id=?";
 
+    private static final String RECHARGE_USER_WALLET =
+            "update touristic_agency.\"user\" " +
+                    "set money = ? where id = ?;";
+
     @Override
     public User create(User entity) {
         try (Connection connection = ConnectionPool.getConnection();
@@ -111,5 +115,17 @@ public class JDBCUserDao implements UserDao {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void rechargeUserWallet(Long amountOfCharge, String username) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(RECHARGE_USER_WALLET)) {
+            ps.setLong(1, amountOfCharge);
+            ps.setString(2, username);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

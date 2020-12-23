@@ -3,11 +3,13 @@ package ua.skidchenko.touristic_agency.service.client_services;
 
 import ua.skidchenko.touristic_agency.entity.Check;
 
+import java.util.List;
+
 public interface ManagerBookingService {
 //    @Transactional
-    Boolean declineBooking(Long checkId);
+    void declineBooking(Long checkId);
+//
+    void confirmBooking(Long checkId);
 
-    Boolean confirmBooking(Long checkId);
-
-//    Page<Check> getPagedWaitingChecks(int currentPage);
+    List<Check> getPagedWaitingChecks(int currentPage);
 }

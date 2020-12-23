@@ -1,13 +1,21 @@
 package ua.skidchenko.touristic_agency.controller;
 
 import ua.skidchenko.touristic_agency.controller.command.*;
+import ua.skidchenko.touristic_agency.controller.command.guest.*;
+import ua.skidchenko.touristic_agency.controller.command.manager.ConfirmBooking;
+import ua.skidchenko.touristic_agency.controller.command.manager.DeclineBooking;
+import ua.skidchenko.touristic_agency.controller.command.manager.DeleteTour;
+import ua.skidchenko.touristic_agency.controller.command.manager.ManagerTourOperations;
+import ua.skidchenko.touristic_agency.controller.command.user.BookTour;
+import ua.skidchenko.touristic_agency.controller.command.user.PersonalAccount;
+import ua.skidchenko.touristic_agency.controller.command.user.RemoveBookingFromCheck;
+import ua.skidchenko.touristic_agency.service.impl.ManagerBookingServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.TourServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserBookingServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
-import java.awt.print.Book;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +36,9 @@ public class Servlet extends HttpServlet {
         commands.put("admin/tour/delete" , new DeleteTour(new TourServiceImpl()));
         commands.put("user/remove-booking" , new RemoveBookingFromCheck(new UserBookingServiceImpl()));
         commands.put("user/book-tour" , new BookTour(new UserBookingServiceImpl()));
+        commands.put("manager/tours-operations" , new ManagerTourOperations(new ManagerBookingServiceImpl()));
+        commands.put("manager/check-decline" , new DeclineBooking(new ManagerBookingServiceImpl()));
+        commands.put("manager/check-confirm" , new ConfirmBooking(new ManagerBookingServiceImpl()));
     }
 
     @Override

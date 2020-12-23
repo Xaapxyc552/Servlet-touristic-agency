@@ -23,4 +23,7 @@ public interface CheckDao extends GenericDao<Check> {
 
     void cancelBookingByCheckId(Long checkId);
 
+    void declineBookingById(Long checkId);
+
+    void confirmBookingByCheckId(Long checkId);
 }

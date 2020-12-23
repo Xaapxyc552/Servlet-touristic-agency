@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
@@ -34,15 +35,15 @@ public class JDBCTourDao implements TourDao {
                     "    and descukr.lang_code = 'uk_UA'" +
                     "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
                     "    and desceng.lang_code = 'en_GB'" +
-                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
                     "    and nameukr.lang_code = 'uk_UA'" +
-                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
                     "    and nameeng.lang_code = 'en_GB'" +
                     "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
                     "               from touristic_agency.tour" +
                     "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
                     "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
-                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id \n" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id " +
                     "where (tour_status = ?)" +
                     "order by burning desc , ";
     private static final String ENDING = " limit ? offset ?;";
@@ -64,15 +65,15 @@ public class JDBCTourDao implements TourDao {
                     "    and descukr.lang_code = 'uk_UA'" +
                     "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
                     "    and desceng.lang_code = 'en_GB'" +
-                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
                     "    and nameukr.lang_code = 'uk_UA'" +
-                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
                     "    and nameeng.lang_code = 'en_GB'" +
                     "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
                     "               from touristic_agency.tour" +
                     "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
                     "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
-                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id \n" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id " +
                     "where (tour_status = ?) and (main_tour.id=?);";
 
     private static final String FIND_BY_ID =
@@ -92,15 +93,15 @@ public class JDBCTourDao implements TourDao {
                     "    and descukr.lang_code = 'uk_UA'" +
                     "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
                     "    and desceng.lang_code = 'en_GB'" +
-                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
                     "    and nameukr.lang_code = 'uk_UA'" +
-                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id\n" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
                     "    and nameeng.lang_code = 'en_GB'" +
                     "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
                     "               from touristic_agency.tour" +
                     "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
                     "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
-                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id \n" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id " +
                     "where (main_tour.id=?);";
 
     private static final String INSERT_TOUR =
@@ -135,15 +136,25 @@ public class JDBCTourDao implements TourDao {
             "set description=? " +
             " where (tour_id = ? AND lang_code = 'uk_UA');";
 
-    public List<Tour> findAllSortedPageableByTourStatus(OrderOfTours orderOfTours,
+    private static final String SET_TOUR_STATUS_DELETED =
+            "update touristic_agency.tour " +
+                    "set tour_status = 'DELETED'" +
+                    "where tour_status='WAITING' and id=?;";
+
+    private static final String GET_COUNT_OF_ROWS =
+            "select count(*) from touristic_agency.tour";
+
+    public Page<Tour> findAllSortedPageableByTourStatus(OrderOfTours orderOfTours,
                                                         TourStatus tourStatus,
                                                         int pageSize,
                                                         int pageNum,
                                                         String sortingDirection) {
         String sql = FIND_ALL_BY_TOUR_STATUS_PAGEABLE_ASC_SORTING + " " +
                 orderOfTours.getPropertyToSort() + " " + sortingDirection + ENDING;
+        int amountOfPages;
         try (Connection connection = ConnectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql);
+             Statement statement = connection.createStatement()) {
             ps.setString(1, tourStatus.name());
             ps.setInt(2, pageSize);
             ps.setInt(3, pageNum * pageSize);
@@ -153,11 +164,14 @@ public class JDBCTourDao implements TourDao {
             while (resultSet.next()) {
                 toursFromDb.add(tourRowMapper.mapRow(resultSet));
             }
-            return toursFromDb;
+            ResultSet amountOfPagesRS = statement.executeQuery(GET_COUNT_OF_ROWS);
+            amountOfPagesRS.next();
+            amountOfPages = (int) Math.ceil((double)amountOfPagesRS.getInt(1)/pageSize);
+            return new Page<>(toursFromDb, amountOfPages, pageNum);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Collections.emptyList();
+        return Page.empty();
     }
 
     @Override
@@ -193,6 +207,18 @@ public class JDBCTourDao implements TourDao {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void setTourAsDeleted(Long tourId) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(SET_TOUR_STATUS_DELETED)) {
+            ps.setLong(1, tourId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
@@ -9,10 +10,8 @@ import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 import ua.skidchenko.touristic_agency.entity.enums.TourType;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
-import ua.skidchenko.touristic_agency.exceptions.TourNotPresentInDBException;
 import ua.skidchenko.touristic_agency.service.TourService;
 
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public class TourServiceImpl implements TourService {
     }
 
     @Override
-    public List<Tour> getPagedWaitingToursOrderedByArgs(OrderOfTours orderOfTours,
+    public Page<Tour> getPagedWaitingToursOrderedByArgs(OrderOfTours orderOfTours,
                                                         String direction,
                                                         int currentPage) {
         return tourDao.findAllSortedPageableByTourStatus
@@ -83,30 +82,8 @@ public class TourServiceImpl implements TourService {
 
     @Override
     //TODO transactional
-    public Tour markTourAsDeleted(Long tourId) {
-        //TODO можно ли таким образом обеспечивать танзакционность?
-//        log.info("Marking tour as deleted. TourID: " + tourId);
-        try {
-//            tourDao.getConnection().setAutoCommit(false);
-            Tour tour = tourDao.findByIdAndTourStatus(tourId, TourStatus.WAITING)
-                    .<TourNotPresentInDBException>orElseThrow(() -> {
-//                    log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
-                                throw new TourNotPresentInDBException(
-                                        "Waiting tour is not present id DB. Tour id:" + tourId);
-                            }
-                    );
-            tour.setTourStatus(TourStatus.DELETED);
-            Tour save = tourDao.update(tour);
-//            tourDao.getConnection().commit();
-//            tourDao.getConnection().setAutoCommit(true);
-//        log.info("Tour marked as deleted. Tour id: " + tourId);
-            return save;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            //                tourDao.getConnection().rollback();
-//                tourDao.getConnection().setAutoCommit(true);
-            throw new NotPresentInDatabaseException("Exception during deleting tour.");
-        }
+    public void markTourAsDeleted(Long tourId) {
+        tourDao.setTourAsDeleted(tourId);
     }
 
     private Tour buildNewTourFromTourDTO(TourDTO tourDTO) {

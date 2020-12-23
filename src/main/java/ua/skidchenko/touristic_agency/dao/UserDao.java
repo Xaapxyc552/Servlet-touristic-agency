@@ -11,4 +11,5 @@ public interface UserDao extends GenericDao<User>{
 
     Optional<User> findByUsername(String username);
 
+    void rechargeUserWallet(Long amountOfCharge, String username);
 }

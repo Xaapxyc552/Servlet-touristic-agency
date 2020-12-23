@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
 import junit.framework.TestCase;
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
@@ -18,7 +19,7 @@ public class JDBCTourDaoTest extends TestCase {
     public void testFindAllSortedPageableByTourStatus() {
 
         TourDao tourDao = DaoFactory.getInstance().createTourDao();
-        List<Tour> asc = tourDao.findAllSortedPageableByTourStatus(OrderOfTours.AMOUNT_OF_PERSONS, TourStatus.WAITING, 8, 0, "asc");
+        Page<Tour> asc = tourDao.findAllSortedPageableByTourStatus(OrderOfTours.AMOUNT_OF_PERSONS, TourStatus.WAITING, 8, 0, "asc");
         System.out.println("123");
     }
 

@@ -1,5 +1,6 @@
-package ua.skidchenko.touristic_agency.controller.command;
+package ua.skidchenko.touristic_agency.controller.command.guest;
 
+import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.service.UserService;
 import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 

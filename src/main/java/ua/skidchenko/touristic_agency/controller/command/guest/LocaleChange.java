@@ -1,4 +1,6 @@
-package ua.skidchenko.touristic_agency.controller.command;
+package ua.skidchenko.touristic_agency.controller.command.guest;
+
+import ua.skidchenko.touristic_agency.controller.command.Command;
 
 import javax.servlet.http.HttpServletRequest;
 

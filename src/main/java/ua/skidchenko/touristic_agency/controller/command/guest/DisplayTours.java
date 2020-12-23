@@ -1,14 +1,23 @@
-package ua.skidchenko.touristic_agency.controller.command;
+package ua.skidchenko.touristic_agency.controller.command.guest;
 
+import ua.skidchenko.touristic_agency.controller.command.Command;
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
+import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.service.TourService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class DisplayTours implements Command {
 
-    private TourService tourService;
+    private static final String AMOUNT_OF_PAGES = "amountOfPages";
+    private static final String PAGES_SEQUENCE = "pagesSequence";
+    private final TourService tourService;
 
     public static final String ORDER_OF_TOURS = "orderOfTours";
     public static final String CURRENT_PAGE = "currentPage";
@@ -33,7 +42,7 @@ public class DisplayTours implements Command {
                 request.getParameter(CURRENT_PAGE) != null) {
             getCurrentSortingFromSession(request);
         } else {
-            getWaitingToursByDefaultWorting(request);
+            getWaitingToursByDefaultSorting(request);
         }
         return "/view/tours.jsp";
     }
@@ -45,35 +54,58 @@ public class DisplayTours implements Command {
         String direction = request.getParameter("direction");
         session.setAttribute(CURRENT_ORDER_OF_TOURS, orderOfTours.getPropertyToSort());
         session.setAttribute(CURRENT_DIRECTION, direction);
-        request.setAttribute("toursFromDb",
-                tourService.getPagedWaitingToursOrderedByArgs(orderOfTours, direction, DEFAULT_CURRENT_PAGE));
+
+        Page<Tour> pageOfWaitingTours = tourService.getPagedWaitingToursOrderedByArgs(
+                orderOfTours,
+                direction,
+                DEFAULT_CURRENT_PAGE);
+        request.setAttribute("toursFromDb", pageOfWaitingTours.getContent());
         request.setAttribute(CURRENT_ORDER_OF_TOURS, orderOfTours.getPropertyToSort());
         request.setAttribute(CURRENT_DIRECTION, direction);
-        request.setAttribute(CURRENT_PAGE, DEFAULT_CURRENT_PAGE);
+        request.setAttribute(CURRENT_PAGE, DEFAULT_CURRENT_PAGE.toString());
+        request.setAttribute(AMOUNT_OF_PAGES, pageOfWaitingTours.getAmountOfPages());
+        request.setAttribute(PAGES_SEQUENCE, pageOfWaitingTours.getAmountOfPages());
+        request.setAttribute(PAGES_SEQUENCE, getPagesSequence(pageOfWaitingTours.getAmountOfPages()));
     }
 
     private void getCurrentSortingFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession();
 
-        OrderOfTours orderOfTours = (OrderOfTours) session.getAttribute(CURRENT_ORDER_OF_TOURS);
+        OrderOfTours orderOfTours =OrderOfTours.valueOf((String) session.getAttribute(CURRENT_ORDER_OF_TOURS));
         String direction = (String) session.getAttribute("direction");
         int currentPage = Integer.parseInt(request.getParameter(CURRENT_PAGE));
 
-        request.setAttribute("toursFromDb",
-                tourService.getPagedWaitingToursOrderedByArgs(
-                        orderOfTours,
-                        direction,
-                        currentPage));
+        Page<Tour> pageOfWaitingTours = tourService.getPagedWaitingToursOrderedByArgs(
+                orderOfTours,
+                direction,
+                currentPage);
+        request.setAttribute("toursFromDb", pageOfWaitingTours.getContent()
+        );
         request.setAttribute(CURRENT_ORDER_OF_TOURS, orderOfTours.getPropertyToSort());
         request.setAttribute(CURRENT_DIRECTION, direction);
         request.setAttribute(CURRENT_PAGE, currentPage);
+        request.setAttribute(AMOUNT_OF_PAGES, pageOfWaitingTours.getAmountOfPages());
+        request.setAttribute(PAGES_SEQUENCE, getPagesSequence(pageOfWaitingTours.getAmountOfPages()));
     }
 
-    private void getWaitingToursByDefaultWorting(HttpServletRequest request) {
-        request.setAttribute("toursFromDb",
-                tourService.getPagedWaitingToursOrderedByArgs(DEFAULT_SORTING, DEFAULT_DIRECTION, DEFAULT_CURRENT_PAGE));
+    private void getWaitingToursByDefaultSorting(HttpServletRequest request) {
+        Page<Tour> pageOfWaitingTours =
+                tourService.getPagedWaitingToursOrderedByArgs(
+                        DEFAULT_SORTING,
+                        DEFAULT_DIRECTION,
+                        DEFAULT_CURRENT_PAGE);
+        request.setAttribute("toursFromDb", pageOfWaitingTours.getContent());
         request.setAttribute(CURRENT_ORDER_OF_TOURS, DEFAULT_SORTING.getPropertyToSort().toLowerCase());
         request.setAttribute(CURRENT_DIRECTION, DEFAULT_DIRECTION);
-        request.setAttribute(CURRENT_PAGE, DEFAULT_CURRENT_PAGE);
+        request.setAttribute(CURRENT_PAGE, DEFAULT_CURRENT_PAGE.toString());
+        request.setAttribute(AMOUNT_OF_PAGES, pageOfWaitingTours.getAmountOfPages());
+        request.setAttribute(PAGES_SEQUENCE, getPagesSequence(pageOfWaitingTours.getAmountOfPages()));
+    }
+
+    private List<String> getPagesSequence(int amountOfPages) {
+        return IntStream.range(0, amountOfPages)
+                .boxed()
+                .map(Objects::toString)
+                .collect(Collectors.toList());
     }
 }
