@@ -15,32 +15,11 @@
 
 </head>
 <body>
+<c:set var="hrefForPagination" value="/app/display-tours"/>
 <jsp:include page="common/common.jsp"/>
-
-<table>
-    <tr>
-        <c:forEach items="${requestScope.get('pagesSequence')}" var="page">
-            <c:choose>
-                <c:when test="${page != requestScope.get('currentPage')}">
-                  <td>  <form action="/app/display-tours">
-                        <input type="hidden" name="currentPage" value="${page}"/>
-                        <input type="submit" value="${page+1}">
-                    </form>
-                  </td>
-                </c:when>
-                <c:when test="${page == requestScope.get('currentPage')}">
-                    <td>
-                        ${page+1}
-                    </td>
-                </c:when>
-            </c:choose>
-
-        </c:forEach>
-    </tr>
-</table>
+<jsp:include page="common/pagingMacros.jsp"/>
 
 <form action="/app/display-tours" method="get">
-    <input type="hidden" name="currentPage" value="0"/>
     <fmt:message key="tour.form.ordering.header"/>:
     <select name="orderOfTours" id="orderOfTours">
         <option value="AMOUNT_OF_PERSONS"><fmt:message key="tour.amount_of_persons"/>:</option>
@@ -59,11 +38,11 @@
 <c:if test="${requestScope.get('isTourIdNotCorrect')==true}">
     <fmt:message key="tour.delete.message"/>
 </c:if>
-<c:if test="${requestScope.get('currentOrderOfTours')!=null}">
-    <fmt:message key="tour.current_order"/> <fmt:message key="tour.${requestScope.get('currentOrderOfTours')}"/><br>
+<c:if test="${sessionScope.get('currentOrderOfTours')!=null}">
+    <fmt:message key="tour.current_order"/> <fmt:message key="tour.${sessionScope.get('currentOrderOfTours').name().toLowerCase()}"/><br>
     <fmt:message key="tour.current_direction"/> <fmt:message
-        key="tour.form.direction.${requestScope.get('currentDirection')}"/><br>
-</c:if><@commonMacro.pagingMacro pagesSequence=pagesSequence currentPage=currentPage href="/tours/list/"/>
+        key="tour.form.direction.${sessionScope.get('currentDirection')}"/><br>
+</c:if>
 <table border="3" style="word-wrap: break-word;" width="500px">
     <tr>
         <c:forEach items="${requestScope.get('toursFromDb')}" var="tour">

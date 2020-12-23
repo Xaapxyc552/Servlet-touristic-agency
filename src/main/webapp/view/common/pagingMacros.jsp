@@ -5,46 +5,25 @@
 
 <fmt:setLocale value="${cookie.get('language').value}" scope="session"/>
 <fmt:setBundle basename="messages"/>
-
-
-<table border="3">
+<table>
     <tr>
-        <td>
-            <form action="${pageContext.request.contextPath}/app/locale" method="get">
-                <input type="hidden" name="language" value="en-GB">
-                <input type="submit" value="English">
-            </form>
-            <form action="${pageContext.request.contextPath}/app/locale" method="get">
-                <input type="hidden" name="language" value="uk-UA">
-                <input type="submit" value="Українська">
-            </form>
-        </td>
-    </tr>
-    <tr>
-        <td><c:choose>
-            <c:when test="${sessionScope.get('role') == null}">
-                <a href="${pageContext.request.contextPath}/app/login"><fmt:message key="common.head.login"/></a>
-                <a href="${pageContext.request.contextPath}/app/registration"><fmt:message key="common.head.sign_up"/></a>
-            </c:when>
-            <c:when test="${sessionScope.get('role') == 'ROLE_USER'}">
-                <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/user/personal-account"><fmt:message key="common.personal_account"/></a><br>
-                <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
-            </c:when>
-            <c:when test="${sessionScope.get('role') == 'ROLE_MANAGER'}">
-                <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message key="common.manager_page"/></a><br>
-                <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
-            </c:when>
-            <c:when test="${sessionScope.get('role') == 'ROLE_ADMIN'}">
-                <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message key="common.manager_page"/></a><br>
-                <a href="${pageContext.request.contextPath}/app/admin/new-tour"><fmt:message key="common.new_tour"/></a><br>
-                <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
-            </c:when>
-        </c:choose>
-        </td>
-    </tr>
-    <table/>
+        <c:forEach items="${requestScope.get('pagesSequence')}" var="page">
+            <c:choose>
+                <c:when test="${page != sessionScope.get('currentPage')}">
+                    <td>  <form action="${hrefForPagination}">
+                        <input type="hidden" name="currentPage" value="${page}"/>
+                        <input type="submit" value="${page+1}">
+                    </form>
+                    </td>
+                </c:when>
+                <c:when test="${page == sessionScope.get('currentPage')}">
+                    <td>
+                            ${page+1}
+                    </td>
+                </c:when>
+            </c:choose>
 
+        </c:forEach>
+    </tr>
+</table>
 
