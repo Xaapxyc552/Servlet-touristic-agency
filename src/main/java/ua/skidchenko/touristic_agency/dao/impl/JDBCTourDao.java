@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.dao.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.TourRowMapper;
@@ -12,14 +13,9 @@ import java.sql.*;
 import java.util.*;
 
 public class JDBCTourDao implements TourDao {
-    private final Connection connection;
 
     private static final String ENG_LANG_CODE = "en_GB";
     private static final String UKR_LAN_CODE = "uk_UA";
-
-    public JDBCTourDao(Connection connection) {
-        this.connection = connection;
-    }
 
     private static final String FIND_ALL_BY_TOUR_STATUS_PAGEABLE_ASC_SORTING =
             "select main_tour.id," +
@@ -79,6 +75,34 @@ public class JDBCTourDao implements TourDao {
                     "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id \n" +
                     "where (tour_status = ?) and (main_tour.id=?);";
 
+    private static final String FIND_BY_ID =
+            "select main_tour.id," +
+                    "       main_tour.tour_status," +
+                    "       main_tour.hotel_type," +
+                    "       main_tour.amount_of_persons," +
+                    "       main_tour.price," +
+                    "       main_tour.burning," +
+                    "       tour_types.tour_types," +
+                    "       nameukr.name as nameukr," +
+                    "       descukr.description as descukr," +
+                    "       nameeng.name as nameeng," +
+                    "       desceng.description as desceng " +
+                    "from touristic_agency.tour main_tour " +
+                    "         join touristic_agency.description_translation_mapping descukr on descukr.tour_id = main_tour.id" +
+                    "    and descukr.lang_code = 'uk_UA'" +
+                    "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
+                    "    and desceng.lang_code = 'en_GB'" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id\n" +
+                    "    and nameukr.lang_code = 'uk_UA'" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id\n" +
+                    "    and nameeng.lang_code = 'en_GB'" +
+                    "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
+                    "               from touristic_agency.tour" +
+                    "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
+                    "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id=main_tour.id \n" +
+                    "where (main_tour.id=?);";
+
     private static final String INSERT_TOUR =
             "INSERT INTO touristic_agency.tour (amount_of_persons, burning, hotel_type, price, tour_status)" +
                     "VALUES (?, ?, ?, ?, ?);";
@@ -118,7 +142,8 @@ public class JDBCTourDao implements TourDao {
                                                         String sortingDirection) {
         String sql = FIND_ALL_BY_TOUR_STATUS_PAGEABLE_ASC_SORTING + " " +
                 orderOfTours.getPropertyToSort() + " " + sortingDirection + ENDING;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, tourStatus.name());
             ps.setInt(2, pageSize);
             ps.setInt(3, pageNum * pageSize);
@@ -137,7 +162,8 @@ public class JDBCTourDao implements TourDao {
 
     @Override
     public Optional<Tour> findByIdAndTourStatus(Long id, TourStatus status) {
-        try (PreparedStatement ps = connection.prepareStatement(FIND_BY_ID_AND_TOUR_STATUS)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(FIND_BY_ID_AND_TOUR_STATUS)) {
             ps.setString(1, status.name());
             ps.setLong(2, id);
             ResultSet resultSet = ps.executeQuery();
@@ -153,8 +179,25 @@ public class JDBCTourDao implements TourDao {
     }
 
     @Override
+    public Optional<Tour> findById(Long id) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(FIND_BY_ID)) {
+            ps.setLong(1, id);
+            ResultSet resultSet = ps.executeQuery();
+            TourRowMapper tourRowMapper = new TourRowMapper();
+            if (!resultSet.next()) {
+                return Optional.empty();
+            }
+            return Optional.of(tourRowMapper.mapRow(resultSet));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public Tour create(Tour tour) {
-        try {
+        try (Connection connection = ConnectionPool.getConnection()) {
             connection.setAutoCommit(false);
             long newTourId;
             try (PreparedStatement ps = connection.prepareStatement(INSERT_TOUR, Statement.RETURN_GENERATED_KEYS)) {
@@ -200,19 +243,15 @@ public class JDBCTourDao implements TourDao {
         } catch (SQLException e) {
             e.printStackTrace();
             //TODO разобраться с непонятным экспешном
-            try {
-                connection.rollback();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
         }
         return tour;
     }
 
     @Override
     public Tour update(Tour tour) throws SQLException {
+        Connection connection = ConnectionPool.getConnection();
         connection.setAutoCommit(false);
-        findByIdAndTourStatus(tour.getId(), TourStatus.WAITING).<NotPresentInDatabaseException>orElseThrow(
+        findById(tour.getId()).<NotPresentInDatabaseException>orElseThrow(
                 () -> {
                     //log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
                     throw new NotPresentInDatabaseException(
@@ -246,6 +285,7 @@ public class JDBCTourDao implements TourDao {
         }
         connection.commit();
         connection.setAutoCommit(true);
+        connection.close();
         return tour;
     }
 
@@ -255,12 +295,6 @@ public class JDBCTourDao implements TourDao {
     }
 
     @Override
-    public Connection getConnection() {
-        return this.connection;
-    }
-
-    @Override
     public void close() throws Exception {
-        this.connection.close();
     }
 }

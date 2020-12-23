@@ -16,4 +16,5 @@ public interface TourDao extends GenericDao<Tour>{
 
     Optional<Tour> findByIdAndTourStatus(Long id, TourStatus status);
 
+    Optional<Tour> findById(Long id);
 }

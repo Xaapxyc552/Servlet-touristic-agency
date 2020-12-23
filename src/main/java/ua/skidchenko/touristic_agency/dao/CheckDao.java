@@ -18,4 +18,9 @@ public interface CheckDao extends GenericDao<Check> {
     List<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum);
 
     Optional<Check> findByIdAndStatus(Long id, CheckStatus statuse);
+
+    void createNewCheck(String username, Long tourId);
+
+    void cancelBookingByCheckId(Long checkId);
+
 }

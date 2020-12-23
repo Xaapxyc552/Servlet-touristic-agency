@@ -82,11 +82,12 @@ public class TourServiceImpl implements TourService {
 //    }
 
     @Override
+    //TODO transactional
     public Tour markTourAsDeleted(Long tourId) {
         //TODO можно ли таким образом обеспечивать танзакционность?
 //        log.info("Marking tour as deleted. TourID: " + tourId);
         try {
-            tourDao.getConnection().setAutoCommit(false);
+//            tourDao.getConnection().setAutoCommit(false);
             Tour tour = tourDao.findByIdAndTourStatus(tourId, TourStatus.WAITING)
                     .<TourNotPresentInDBException>orElseThrow(() -> {
 //                    log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
@@ -96,18 +97,14 @@ public class TourServiceImpl implements TourService {
                     );
             tour.setTourStatus(TourStatus.DELETED);
             Tour save = tourDao.update(tour);
-            tourDao.getConnection().commit();
-            tourDao.getConnection().setAutoCommit(true);
+//            tourDao.getConnection().commit();
+//            tourDao.getConnection().setAutoCommit(true);
 //        log.info("Tour marked as deleted. Tour id: " + tourId);
             return save;
         } catch (SQLException e) {
             e.printStackTrace();
-            try {
-                tourDao.getConnection().rollback();
-                tourDao.getConnection().setAutoCommit(true);
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            //                tourDao.getConnection().rollback();
+//                tourDao.getConnection().setAutoCommit(true);
             throw new NotPresentInDatabaseException("Exception during deleting tour.");
         }
     }

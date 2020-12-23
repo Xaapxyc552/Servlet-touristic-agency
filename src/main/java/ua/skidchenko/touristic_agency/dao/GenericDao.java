@@ -9,7 +9,4 @@ public interface GenericDao<T> extends AutoCloseable{
     T create (T entity);
     T update(T entity) throws SQLException;
     void delete(int id);
-
-    Connection getConnection();
-
 }

@@ -6,9 +6,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UserBookingService {
-    Check bookTourByIdForUsername(Long tourId, String username);
+    void bookTourByIdForUsername(Long tourId, String username);
 
     List<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException;
 
-    Boolean cancelBookingByCheckId(Long checkId) throws SQLException;
+    void cancelBookingByCheckId(Long checkId) throws SQLException;
 }

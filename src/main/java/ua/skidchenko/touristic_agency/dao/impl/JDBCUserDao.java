@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.dao.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.UserDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.UserRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;
@@ -9,11 +10,6 @@ import java.sql.*;
 import java.util.Optional;
 
 public class JDBCUserDao implements UserDao {
-    private Connection connection;
-
-    public JDBCUserDao(Connection connection) {
-        this.connection = connection;
-    }
 
     private static final String USER_CREATE =
             "INSERT INTO touristic_agency.user (username,password,email,firstname,role,enabled,money) VALUES (?,?,?,?,?,?,?);";
@@ -30,7 +26,8 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public User create(User entity) {
-        try (PreparedStatement ps = connection.prepareStatement(USER_CREATE, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(USER_CREATE, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getPassword());
             ps.setString(3, entity.getEmail());
@@ -51,7 +48,8 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public User update(User entity) {
-        try (PreparedStatement ps = connection.prepareStatement(UPDATE_USER)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(UPDATE_USER)) {
             ps.setString(1, entity.getUsername());
             ps.setString(2, entity.getPassword());
             ps.setString(3, entity.getEmail());
@@ -74,11 +72,6 @@ public class JDBCUserDao implements UserDao {
     }
 
     @Override
-    public Connection getConnection() {
-        return this.connection;
-    }
-
-    @Override
     public void close() throws Exception {
 
     }
@@ -86,7 +79,8 @@ public class JDBCUserDao implements UserDao {
     @Override
     public Optional<User> findByUsernameAndRole(String username, Role role) {
         User user = null;
-        try (PreparedStatement ps = connection.prepareStatement(USER_BY_USERNAME_AND_ROLE)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(USER_BY_USERNAME_AND_ROLE)) {
             ps.setString(1, username);
             ps.setString(2, role.name());
             ResultSet resultSet = ps.executeQuery();
@@ -104,7 +98,8 @@ public class JDBCUserDao implements UserDao {
     @Override
     public Optional<User> findByUsername(String username) {
         User user;
-        try (PreparedStatement ps = connection.prepareStatement(USER_BY_USERNAME)) {
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(USER_BY_USERNAME)) {
             ps.setString(1, username);
             ResultSet resultSet = ps.executeQuery();
             UserRowMapper rowMapper = new UserRowMapper();

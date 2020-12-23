@@ -7,6 +7,7 @@ import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
+import java.awt.print.Book;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class Servlet extends HttpServlet {
         commands.put("user/personal-account" , new PersonalAccount(new UserBookingServiceImpl()));
         commands.put("admin/tour/delete" , new DeleteTour(new TourServiceImpl()));
         commands.put("user/remove-booking" , new RemoveBookingFromCheck(new UserBookingServiceImpl()));
+        commands.put("user/book-tour" , new BookTour(new UserBookingServiceImpl()));
     }
 
     @Override
