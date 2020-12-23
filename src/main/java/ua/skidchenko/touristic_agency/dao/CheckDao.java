@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao;
 
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.User;
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public interface CheckDao extends GenericDao<Check> {
 
-    List<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException;
+    Page<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException;
 
     List<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum);
 

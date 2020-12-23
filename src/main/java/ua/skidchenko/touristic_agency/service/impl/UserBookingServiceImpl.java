@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.dao.TourDao;
@@ -36,7 +37,7 @@ public class UserBookingServiceImpl implements UserBookingService {
     }
 
     @Override
-    public List<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException {
+    public Page<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException {
 //        log.info("Retrieving paged user's checks ordered by status. Username: " +
 //                "" + username + ". Page: " + page);
         try {

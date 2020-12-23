@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
@@ -60,7 +61,7 @@ public class JDBCCheckDao implements CheckDao {
             "         right join touristic_agency.check checks on main_tour.id = checks.tour_id" +
             "         join touristic_agency.check_status on touristic_agency.check_status.id = checks.status_id" +
             "         join touristic_agency.user users on checks.user_id = users.id " +
-            "where tour_status IN ('REGISTERED','WAITING')" +
+            "where tour_status IN ('REGISTERED','WAITING','SOLD')" +
             "  AND (username = ?)" +
             " order by (case status " +
             "              when 'WAITING_FOR_CONFIRM' then 1" +
@@ -112,6 +113,9 @@ public class JDBCCheckDao implements CheckDao {
                     "where check_status.status = ?" +
                     "  AND checks.id = ?;";
 
+    private static final String COUNT_ALL_USERS_CHECKS =
+            "with user_id as (select id from touristic_agency.\"user\" where username = ?)" +
+                    "select count(*) from touristic_agency.\"check\" where user_id=(select max(user_id.id) from user_id);";
 
     private static final String CREATE_CHECK_AND_BOOK_TOUR_BY_USERNAME_AND_TOUR_ID =
             "begin;" +
@@ -275,10 +279,11 @@ public class JDBCCheckDao implements CheckDao {
                     "commit;";
 
     @Override
-    public List<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException {
+    public Page<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException {
         List<Check> checks;
         try (Connection connection = ConnectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(GET_CHECK_WITH_TOUR_AND_USER)) {
+             PreparedStatement ps = connection.prepareStatement(GET_CHECK_WITH_TOUR_AND_USER);
+             PreparedStatement st = connection.prepareStatement(COUNT_ALL_USERS_CHECKS)) {
             ps.setString(1, username);
             ps.setInt(2, pageSize);
             ps.setInt(3, pageNum * pageSize);
@@ -295,11 +300,14 @@ public class JDBCCheckDao implements CheckDao {
                 check.setTour(tour);
                 checks.add(check);
             }
+            st.setString(1,username);
+            ResultSet countOfRows = st.executeQuery();
+            countOfRows.next();
+
+            return new Page<>(checks,(int) Math.ceil((double)countOfRows.getInt(1)/pageSize),pageNum);
         } catch (SQLException e) {
             throw new SQLException("Exception while retrieving checks from DB.", e);
         }
-
-        return checks;
     }
 
     @Override

@@ -7,6 +7,8 @@
 <fmt:setLocale value="${language}" scope="session"/>
 <fmt:setBundle basename="messages"/>
 
+
+
 <jsp:include page="../common/common.jsp"/>
 
 <fmt:message key="personal_page.firstname"/>${sessionScope.get('firstname')}<br>
@@ -24,7 +26,11 @@
 </form>
 
 
-<%--<@commonMacro.pagingMacro pagesSequence=pagesSequence currentPage=currentPage  href="/user/personal-account/"/>--%>
+<c:set var="hrefForPagination" value="/app/user/personal-account"/>
+<c:set var="currentPage" value="${requestScope.get('currentPage')}"/>
+<jsp:include page="../common/pagingMacros.jsp"/>
+
+
 
 <table>
     <fmt:message key="check.header"/> <br>

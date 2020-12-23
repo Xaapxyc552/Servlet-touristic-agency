@@ -16,6 +16,7 @@
 </head>
 <body>
 <c:set var="hrefForPagination" value="/app/display-tours"/>
+<c:set var="currentPage" value="${sessionScope.get('currentPage')}"/>
 <jsp:include page="common/common.jsp"/>
 <jsp:include page="common/pagingMacros.jsp"/>
 

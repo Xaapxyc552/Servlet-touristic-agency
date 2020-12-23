@@ -9,14 +9,14 @@
     <tr>
         <c:forEach items="${requestScope.get('pagesSequence')}" var="page">
             <c:choose>
-                <c:when test="${page != sessionScope.get('currentPage')}">
+                <c:when test="${page != currentPage}">
                     <td>  <form action="${hrefForPagination}">
                         <input type="hidden" name="currentPage" value="${page}"/>
                         <input type="submit" value="${page+1}">
                     </form>
                     </td>
                 </c:when>
-                <c:when test="${page == sessionScope.get('currentPage')}">
+                <c:when test="${page == currentPage}">
                     <td>
                             ${page+1}
                     </td>
