@@ -1,4 +1,3 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page isELIgnored="false" %>
@@ -10,7 +9,10 @@
 <jsp:include page="../common/common.jsp"/>
 
 
-<@commonMacro.pagingMacro pagesSequence=pagesSequence currentPage=currentPage  href="/manager/tours-operations/"/>
+<c:set var="hrefForPagination" value="/app/manager/tour-operations"/>
+<c:set var="currentPage" value="${requestScope.get('currentPage')}"/>
+<jsp:include page="../common/pagingMacros.jsp"/>
+
 <table>
 <%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
     <c:forEach items="${requestScope.get('waitingChecks')}" var="check">
@@ -44,14 +46,14 @@
 
             <tr>
                 <th>
-                    <form action="/app/manager/check-decline" method="post">
+                    <form action="${pageContext.request.contextPath}/app/manager/check-decline" method="post">
                         <input type="hidden" name="check_id" value="${check.id}"/>
                     <%--                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
                         <input type="submit" value="<fmt:message key="check.decline"/>">
                     </form>
                 </th>
                 <th>
-                    <form action="/app/manager/check-confirm" method="post">
+                    <form action="${pageContext.request.contextPath}/app/manager/check-confirm" method="post">
                         <input type="hidden" name="check_id" value="${check.id}"/>
                     <%--                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>?--%>
                         <input type="submit" value="<fmt:message key="check.confirm"/>">

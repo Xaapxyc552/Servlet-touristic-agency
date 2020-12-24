@@ -16,7 +16,7 @@ public interface CheckDao extends GenericDao<Check> {
 
     Page<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException;
 
-    List<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum);
+    Page<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum);
 
     Optional<Check> findByIdAndStatus(Long id, CheckStatus statuse);
 

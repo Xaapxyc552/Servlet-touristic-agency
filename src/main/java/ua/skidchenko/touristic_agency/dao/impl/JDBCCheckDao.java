@@ -3,8 +3,6 @@ package ua.skidchenko.touristic_agency.dao.impl;
 import ua.skidchenko.touristic_agency.controller.util.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.ConnectionPool;
-import ua.skidchenko.touristic_agency.dao.OrderOfTours;
-import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.CheckRowMapper;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.TourRowMapper;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.UserRowMapper;
@@ -12,8 +10,6 @@ import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
-import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
-import ua.skidchenko.touristic_agency.entity.enums.TourType;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
 import java.sql.*;
@@ -23,55 +19,55 @@ public class JDBCCheckDao implements CheckDao {
 
     private static final String GET_CHECK_WITH_TOUR_AND_USER =
             "select main_tour.id," +
-            "       main_tour.tour_status," +
-            "       main_tour.hotel_type," +
-            "       main_tour.amount_of_persons," +
-            "       main_tour.price," +
-            "       main_tour.burning," +
-            "       tour_types.tour_types," +
-            "       nameukr.name        as nameukr," +
-            "       descukr.description as descukr," +
-            "       nameeng.name        as nameeng," +
-            "       desceng.description as desceng," +
-            "       checks.total_price," +
-            "       check_status.status as check_status," +
-            "       checks.id           as check_id," +
-            "       checks.user_id," +
-            "       users.role," +
-            "       users.enabled," +
-            "       users.email," +
-            "       users.firstname," +
-            "       users.money," +
-            "       users.password," +
-            "       users.username " +
-            " from touristic_agency.tour main_tour " +
-            "         join touristic_agency.description_translation_mapping descukr on descukr.tour_id = main_tour.id" +
-            "    and descukr.lang_code = 'uk_UA'" +
-            "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
-            "    and desceng.lang_code = 'en_GB'" +
-            "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
-            "    and nameukr.lang_code = 'uk_UA'" +
-            "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
-            "    and nameeng.lang_code = 'en_GB'" +
-            "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
-            "               from touristic_agency.tour" +
-            "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
-            "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
-            "               group by tour_id) as tour_types on tour_types.tour_id = main_tour.id" +
-            "         right join touristic_agency.check checks on main_tour.id = checks.tour_id" +
-            "         join touristic_agency.check_status on touristic_agency.check_status.id = checks.status_id" +
-            "         join touristic_agency.user users on checks.user_id = users.id " +
-            "where tour_status IN ('REGISTERED','WAITING','SOLD')" +
-            "  AND (username = ?)" +
-            " order by (case status " +
-            "              when 'WAITING_FOR_CONFIRM' then 1" +
-            "              when 'CONFIRMED' then 2" +
-            "              when 'DECLINED' then 3" +
-            "              when 'CANCELED' then 4" +
-            "    end) limit ? offset ?;";
+                    "       main_tour.tour_status," +
+                    "       main_tour.hotel_type," +
+                    "       main_tour.amount_of_persons," +
+                    "       main_tour.price," +
+                    "       main_tour.burning," +
+                    "       tour_types.tour_types," +
+                    "       nameukr.name        as nameukr," +
+                    "       descukr.description as descukr," +
+                    "       nameeng.name        as nameeng," +
+                    "       desceng.description as desceng," +
+                    "       checks.total_price," +
+                    "       check_status.status as check_status," +
+                    "       checks.id           as check_id," +
+                    "       checks.user_id," +
+                    "       users.role," +
+                    "       users.enabled," +
+                    "       users.email," +
+                    "       users.firstname," +
+                    "       users.money," +
+                    "       users.password," +
+                    "       users.username " +
+                    " from touristic_agency.tour main_tour " +
+                    "         join touristic_agency.description_translation_mapping descukr on descukr.tour_id = main_tour.id" +
+                    "    and descukr.lang_code = 'uk_UA'" +
+                    "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
+                    "    and desceng.lang_code = 'en_GB'" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
+                    "    and nameukr.lang_code = 'uk_UA'" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
+                    "    and nameeng.lang_code = 'en_GB'" +
+                    "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
+                    "               from touristic_agency.tour" +
+                    "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
+                    "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id = main_tour.id" +
+                    "         right join touristic_agency.check checks on main_tour.id = checks.tour_id" +
+                    "         join touristic_agency.check_status on touristic_agency.check_status.id = checks.status_id" +
+                    "         join touristic_agency.user users on checks.user_id = users.id " +
+                    "where tour_status IN ('REGISTERED','WAITING','SOLD')" +
+                    "  AND (username = ?)" +
+                    " order by (case status " +
+                    "              when 'WAITING_FOR_CONFIRM' then 1" +
+                    "              when 'CONFIRMED' then 2" +
+                    "              when 'DECLINED' then 3" +
+                    "              when 'CANCELED' then 4" +
+                    "    end) limit ? offset ?;";
 
     private static final String GET_CHECK_BY_ID_AND_STATUS =
-                    "select main_tour.id," +
+            "select main_tour.id," +
                     "       main_tour.tour_status," +
                     "       main_tour.hotel_type," +
                     "       main_tour.amount_of_persons," +
@@ -185,7 +181,7 @@ public class JDBCCheckDao implements CheckDao {
                     "commit;";
 
     public static final String GET_ALL_WAITING_FOR_CONFORMATION =
-                    "select main_tour.id," +
+            "select main_tour.id," +
                     "       main_tour.tour_status," +
                     "       main_tour.hotel_type," +
                     "       main_tour.amount_of_persons," +
@@ -226,6 +222,9 @@ public class JDBCCheckDao implements CheckDao {
                     "         join touristic_agency.check_status on touristic_agency.check_status.id = checks.status_id" +
                     "         join touristic_agency.user users on checks.user_id = users.id " +
                     "where check_status.status = 'WAITING_FOR_CONFIRM';";
+
+    private static final String COUNT_ALL_WAITING_FOR_CONFIRMATION=
+            "select count(*) from touristic_agency.check where status_id = 1;";
 
     private static final String DECLINE_BOOKING_BY_ID =
             "begin;" +
@@ -300,21 +299,22 @@ public class JDBCCheckDao implements CheckDao {
                 check.setTour(tour);
                 checks.add(check);
             }
-            st.setString(1,username);
+            st.setString(1, username);
             ResultSet countOfRows = st.executeQuery();
             countOfRows.next();
 
-            return new Page<>(checks,(int) Math.ceil((double)countOfRows.getInt(1)/pageSize),pageNum);
+            return new Page<>(checks, (int) Math.ceil((double) countOfRows.getInt(1) / pageSize), pageNum);
         } catch (SQLException e) {
             throw new SQLException("Exception while retrieving checks from DB.", e);
         }
     }
 
     @Override
-    public List<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum) {
+    public Page<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum) {
         List<Check> checks = new ArrayList<>();
         try (Connection connection = ConnectionPool.getConnection();
-             PreparedStatement ps = connection.prepareStatement(GET_ALL_WAITING_FOR_CONFORMATION)) {
+             PreparedStatement ps = connection.prepareStatement(GET_ALL_WAITING_FOR_CONFORMATION);
+             Statement st = connection.createStatement()) {
             ResultSet resultSet = ps.executeQuery();
             TourRowMapper tourRowMapper = new TourRowMapper();
             UserRowMapper userRowMapper = new UserRowMapper();
@@ -323,17 +323,20 @@ public class JDBCCheckDao implements CheckDao {
             Tour tour;
             User user;
             while (resultSet.next()) {
-                 check = checkRowMapper.mapRow(resultSet);
-                 tour = tourRowMapper.mapRow(resultSet);
-                 user = userRowMapper.mapRow(resultSet);
-                 check.setUser(user);
-                 check.setTour(tour);
-                 checks.add(check);
+                check = checkRowMapper.mapRow(resultSet);
+                tour = tourRowMapper.mapRow(resultSet);
+                user = userRowMapper.mapRow(resultSet);
+                check.setUser(user);
+                check.setTour(tour);
+                checks.add(check);
             }
+            ResultSet countOfRows = st.executeQuery(COUNT_ALL_WAITING_FOR_CONFIRMATION);
+            countOfRows.next();
+            return new Page<>(checks, (int) Math.ceil((double) countOfRows.getInt(1) / pageSize), pageNum);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return checks;
+        return Page.empty();
     }
 
     @Override

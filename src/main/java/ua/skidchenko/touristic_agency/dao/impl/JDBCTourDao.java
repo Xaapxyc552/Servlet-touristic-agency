@@ -142,7 +142,7 @@ public class JDBCTourDao implements TourDao {
                     "where tour_status='WAITING' and id=?;";
 
     private static final String GET_COUNT_OF_ROWS =
-            "select count(*) from touristic_agency.tour";
+            "select count(*) from touristic_agency.tour where tour_status='WAITING'";
 
     public Page<Tour> findAllSortedPageableByTourStatus(OrderOfTours orderOfTours,
                                                         TourStatus tourStatus,
