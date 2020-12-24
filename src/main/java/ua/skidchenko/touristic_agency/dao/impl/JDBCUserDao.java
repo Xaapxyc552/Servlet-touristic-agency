@@ -1,6 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
-import ua.skidchenko.touristic_agency.dao.ConnectionPool;
+import ua.skidchenko.touristic_agency.dao.connection_source.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.UserDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.UserRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;

@@ -1,7 +1,7 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
 import ua.skidchenko.touristic_agency.controller.util.Page;
-import ua.skidchenko.touristic_agency.dao.ConnectionPool;
+import ua.skidchenko.touristic_agency.dao.connection_source.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.TourRowMapper;

@@ -1,4 +1,4 @@
-package ua.skidchenko.touristic_agency.dao;
+package ua.skidchenko.touristic_agency.dao.connection_source;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
@@ -31,7 +31,7 @@ public class ConnectionPool implements ServletContextListener {
         p.setMaxActive(100);
         p.setInitialSize(10);
 //        p.setMaxWait(10000);
-        p.setRemoveAbandonedTimeout(60);
+        p.setRemoveAbandonedTimeout(300);
 //        p.setMinEvictableIdleTimeMillis(30000);
         p.setMinIdle(10);
         p.setLogAbandoned(true);
