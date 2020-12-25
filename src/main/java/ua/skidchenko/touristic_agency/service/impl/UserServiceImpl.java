@@ -13,20 +13,20 @@ import java.util.Optional;
 public class UserServiceImpl extends UserService {
 
     @Override
-//    @Transactional
+
     public User saveUser(UserDTO userDTO) {
         return userDao.create(buildUserFromDTO(userDTO));
     }
+
     @Override
     public Optional<User> getUserByUsername(String username) {
         return userDao.findByUsername(username);
     }
 
     @Override
-//    @Transactional
     public void chargeUserWallet(Long amountOfCharge, String username) {
 //        log.info("Starting recharging user`s account. Amount: " + amountOfCharge + ". Username: " + username);
-        userDao.rechargeUserWallet(amountOfCharge,username);
+        userDao.rechargeUserWallet(amountOfCharge, username);
     }
 
     private User buildUserFromDTO(UserDTO userDTO) {

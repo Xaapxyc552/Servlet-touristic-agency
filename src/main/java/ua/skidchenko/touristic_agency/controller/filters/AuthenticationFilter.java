@@ -33,7 +33,7 @@ public class AuthenticationFilter implements Filter {
         } else if (pathUrl.contains("user") && userRole.getAuthority().equals("ROLE_USER")) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            ((HttpServletResponse) servletResponse).sendRedirect("/app/forbidden");
+            ((HttpServletResponse) servletResponse).sendRedirect("/app/logout");
         }
     }
 

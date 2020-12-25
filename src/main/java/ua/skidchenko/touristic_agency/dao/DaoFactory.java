@@ -15,6 +15,10 @@ public abstract class DaoFactory {
         }
         return daoFactory;
     }
+
+    protected DaoFactory() {
+    }
+
     public abstract CheckDao createCheckDao();
 
     public abstract UserDao createUserDao();

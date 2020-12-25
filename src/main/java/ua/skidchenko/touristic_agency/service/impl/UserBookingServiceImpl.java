@@ -10,13 +10,14 @@ import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 
 //@Log4j2
 public class UserBookingServiceImpl implements UserBookingService {
 
-    private static final int pageSize=5;
-
+    private static final int PAGE_SIZE =
+            Integer.parseInt(ResourceBundle.getBundle("common").getString("page.size"));
     private final CheckDao checkDao = DaoFactory.getInstance().createCheckDao();
     private final UserDao userDao = DaoFactory.getInstance().createUserDao();
     private final TourDao tourDao = DaoFactory.getInstance().createTourDao();
@@ -25,7 +26,7 @@ public class UserBookingServiceImpl implements UserBookingService {
     public void bookTourByIdForUsername(Long tourId, String username) {
 //        log.info("Booking tour for user by username and tourId. " +
 //                "Username: " + username + ". Tour ID:" + tourId + ".");
-        checkDao.createNewCheck(username,tourId);
+        checkDao.createNewCheck(username, tourId);
 //        log.info("Finished creation check:" + bookingCheck.toString());
     }
 
@@ -34,9 +35,9 @@ public class UserBookingServiceImpl implements UserBookingService {
 //        log.info("Retrieving paged user's checks ordered by status. Username: " +
 //                "" + username + ". Page: " + page);
         try {
-            return checkDao.findAllByUserOrderByStatus(username, pageSize,page);
+            return checkDao.findAllByUserOrderByStatus(username, PAGE_SIZE, page);
         } catch (SQLException e) {
-            throw new SQLException("Exception during retrieving checks from DB.",e);
+            throw new SQLException("Exception during retrieving checks from DB.", e);
         }
     }
 

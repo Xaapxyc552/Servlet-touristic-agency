@@ -27,28 +27,27 @@ import java.util.Map;
 
 public class Servlet extends HttpServlet {
     private final Map<String, Command> commands = new HashMap<>();
-
+    private final CommandFactory commandFactory = CommandFactory.getInstance();
     @Override
     public void init(){
-        commands.put("logout", new LogOut());
-        commands.put("login", new Login(new UserServiceImpl()));
-        commands.put("forbidden", new ForbiddenPage());
-        commands.put("registration", new RegistrationPage());
-        commands.put("register-user", new RegisterUser(new UserServiceImpl()));
-        commands.put("locale" , new LocaleChange());
-        commands.put("display-tours" , new DisplayTours(new TourServiceImpl()));
-        commands.put("user/personal-account" , new PersonalAccount(new UserBookingServiceImpl(),new UserServiceImpl()));
-        commands.put("user/remove-booking" , new RemoveBookingFromCheck(new UserBookingServiceImpl()));
-        commands.put("user/book-tour" , new BookTour(new UserBookingServiceImpl()));
-        commands.put("user/recharge-account" , new RechargeWallet(new UserServiceImpl()));
-        commands.put("manager/tours-operations" , new ManagerTourOperations(new ManagerBookingServiceImpl()));
-        commands.put("manager/check-decline" , new DeclineBooking(new ManagerBookingServiceImpl()));
-        commands.put("manager/check-confirm" , new ConfirmBooking(new ManagerBookingServiceImpl()));
-        commands.put("admin/tour/delete" , new DeleteTour(new TourServiceImpl()));
-        commands.put("admin/new-tour" , new NewTour());
-        commands.put("admin/new-tour/create" , new CreateNewTour(new TourServiceImpl()));
-        commands.put("admin/edit-tour" , new EditTour(new TourServiceImpl()));
-        commands.put("admin/edit-tour/update" , new UpdateEditedTour(new TourServiceImpl()));
+        commands.put("logout", commandFactory.logOut());
+        commands.put("login", commandFactory.login());
+        commands.put("registration", commandFactory.registrationPage());
+        commands.put("register-user", commandFactory.registerUser());
+        commands.put("locale" , commandFactory.localeChange());
+        commands.put("display-tours" , commandFactory.displayTours());
+        commands.put("user/personal-account" , commandFactory.personalAccount());
+        commands.put("user/remove-booking" , commandFactory.removeBookingFromCheck());
+        commands.put("user/book-tour" , commandFactory.bookTour());
+        commands.put("user/recharge-account" , commandFactory.rechargeWallet());
+        commands.put("manager/tours-operations" , commandFactory.managerTourOperations());
+        commands.put("manager/check-decline" , commandFactory.declineBooking());
+        commands.put("manager/check-confirm" , commandFactory.confirmBooking());
+        commands.put("admin/tour/delete" , commandFactory.deleteTour());
+        commands.put("admin/new-tour" , commandFactory.newTour());
+        commands.put("admin/new-tour/create" , commandFactory.createNewTour());
+        commands.put("admin/edit-tour" , commandFactory.editTour());
+        commands.put("admin/edit-tour/update" ,commandFactory.updateEditedTour());
     }
 
     @Override

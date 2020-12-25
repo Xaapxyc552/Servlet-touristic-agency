@@ -18,7 +18,7 @@ public class RegisterUser implements Command {
     private final UserService userService;
 
     private static final String REGISTRATION_PAGE_PATH = "/view/registration.jsp";
-    public RegisterUser(UserServiceImpl userService) {
+    public RegisterUser(UserService userService) {
         this.userService = userService;
     }
 

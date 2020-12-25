@@ -7,20 +7,18 @@ import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dto.TourDTO;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
-import ua.skidchenko.touristic_agency.entity.enums.TourType;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
 import ua.skidchenko.touristic_agency.service.TourService;
 
-import java.util.stream.Collectors;
+import java.util.ResourceBundle;
 
-//@Service
 //@Log4j2
 public class TourServiceImpl implements TourService {
 
     private final TourDao tourDao = DaoFactory.getInstance().createTourDao();
-    //TODO вынести в проперти
-    private int pageSize = 5;
+    private static final int PAGE_SIZE =
+            Integer.parseInt(ResourceBundle.getBundle("common").getString("page.size"));
 
     @Override
     public Tour saveTourToDB(Tour tour) {
@@ -33,7 +31,7 @@ public class TourServiceImpl implements TourService {
                                                         String direction,
                                                         int currentPage) {
         return tourDao.findAllSortedPageableByTourStatus
-                (orderOfTours, TourStatus.WAITING, pageSize, currentPage, direction);
+                (orderOfTours, TourStatus.WAITING, PAGE_SIZE, currentPage, direction);
     }
 
     @Override
@@ -66,7 +64,6 @@ public class TourServiceImpl implements TourService {
     public void markTourAsDeleted(Long tourId) {
         tourDao.setTourAsDeleted(tourId);
     }
-
 
 
 }
