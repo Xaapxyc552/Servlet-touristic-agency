@@ -1,6 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
-import ua.skidchenko.touristic_agency.controller.util.Page;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.connection_source.ConnectionPool;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.CheckRowMapper;
@@ -378,6 +378,7 @@ public class JDBCCheckDao implements CheckDao {
             ps.setLong(7, tourId);
             ps.executeUpdate();
         } catch (SQLException e) {
+//            case (e.getSQLState())
             e.printStackTrace();
         }
     }

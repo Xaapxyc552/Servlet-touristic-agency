@@ -1,14 +1,12 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
-import ua.skidchenko.touristic_agency.controller.util.Page;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
 import ua.skidchenko.touristic_agency.service.client_services.ManagerBookingService;
-
-import java.util.List;
 
 //@Service
 //@Log4j2

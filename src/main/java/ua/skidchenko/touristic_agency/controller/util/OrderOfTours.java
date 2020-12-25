@@ -1,4 +1,4 @@
-package ua.skidchenko.touristic_agency.dao;
+package ua.skidchenko.touristic_agency.controller.util;
 
 public enum OrderOfTours {
     AMOUNT_OF_PERSONS("amount_of_persons")

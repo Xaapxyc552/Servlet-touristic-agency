@@ -17,6 +17,15 @@
     <table>
         <tr>
             <td>
+                <fmt:message key="tour.form.burning"/>
+                <select name="burning" id="burning">
+                    <option value="true"><fmt:message key="tour.form.burning.yes"/></option>
+                    <option value="false"><fmt:message key="tour.form.burning.no"/></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <label for="name_uk_UA"><fmt:message key="tour.form.name.ukrainian"/></label><br>
                 <input type="text" id="name_uk_UA" name="name_uk_UA">
             </td>

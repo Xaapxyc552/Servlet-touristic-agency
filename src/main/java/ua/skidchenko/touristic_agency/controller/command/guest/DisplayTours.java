@@ -1,8 +1,8 @@
 package ua.skidchenko.touristic_agency.controller.command.guest;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
-import ua.skidchenko.touristic_agency.controller.util.Page;
-import ua.skidchenko.touristic_agency.dao.OrderOfTours;
+import ua.skidchenko.touristic_agency.dto.Page;
+import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.service.TourService;
 

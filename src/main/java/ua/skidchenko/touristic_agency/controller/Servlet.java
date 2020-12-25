@@ -2,7 +2,9 @@ package ua.skidchenko.touristic_agency.controller;
 
 import ua.skidchenko.touristic_agency.controller.command.*;
 import ua.skidchenko.touristic_agency.controller.command.admin.CreateNewTour;
+import ua.skidchenko.touristic_agency.controller.command.admin.EditTour;
 import ua.skidchenko.touristic_agency.controller.command.admin.NewTour;
+import ua.skidchenko.touristic_agency.controller.command.admin.UpdateEditedTour;
 import ua.skidchenko.touristic_agency.controller.command.guest.*;
 import ua.skidchenko.touristic_agency.controller.command.manager.ConfirmBooking;
 import ua.skidchenko.touristic_agency.controller.command.manager.DeclineBooking;
@@ -43,6 +45,8 @@ public class Servlet extends HttpServlet {
         commands.put("manager/check-confirm" , new ConfirmBooking(new ManagerBookingServiceImpl()));
         commands.put("admin/new-tour" , new NewTour());
         commands.put("admin/new-tour/create" , new CreateNewTour(new TourServiceImpl()));
+        commands.put("admin/edit-tour" , new EditTour(new TourServiceImpl()));
+        commands.put("admin/edit-tour/update" , new UpdateEditedTour(new TourServiceImpl()));
     }
 
     @Override

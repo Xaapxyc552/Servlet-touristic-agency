@@ -16,6 +16,7 @@ public class ConnectionPool implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        //сделать при запуске программы.
         PoolProperties p = new PoolProperties();
         p.setUrl("jdbc:postgresql://localhost:4000/touristic_agency");
         p.setDriverClassName("org.postgresql.Driver");

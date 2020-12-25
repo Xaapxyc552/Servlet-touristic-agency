@@ -1,15 +1,10 @@
 package ua.skidchenko.touristic_agency.dao;
 
-import ua.skidchenko.touristic_agency.controller.util.Page;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.entity.Check;
-import ua.skidchenko.touristic_agency.entity.Tour;
-import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
-import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 public interface CheckDao extends GenericDao<Check> {

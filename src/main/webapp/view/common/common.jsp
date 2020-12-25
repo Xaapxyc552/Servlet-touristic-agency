@@ -24,25 +24,34 @@
         <td><c:choose>
             <c:when test="${sessionScope.get('role') == null}">
                 <a href="${pageContext.request.contextPath}/app/login"><fmt:message key="common.head.login"/></a>
-                <a href="${pageContext.request.contextPath}/app/registration"><fmt:message key="common.head.sign_up"/></a>
+                <a href="${pageContext.request.contextPath}/app/registration"><fmt:message
+                        key="common.head.sign_up"/></a>
             </c:when>
             <c:when test="${sessionScope.get('role') == 'ROLE_USER'}">
                 <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/user/personal-account"><fmt:message key="common.personal_account"/></a><br>
+                <a href="${pageContext.request.contextPath}/app/user/personal-account"><fmt:message
+                        key="common.personal_account"/></a><br>
                 <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
             </c:when>
             <c:when test="${sessionScope.get('role') == 'ROLE_MANAGER'}">
                 <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message key="common.manager_page"/></a><br>
+                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message
+                        key="common.manager_page"/></a><br>
                 <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
             </c:when>
             <c:when test="${sessionScope.get('role') == 'ROLE_ADMIN'}">
                 <fmt:message key="common.you_login_as"/> ${sessionScope.username}
-                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message key="common.manager_page"/></a><br>
+                <a href="${pageContext.request.contextPath}/app/manager/tours-operations"><fmt:message
+                        key="common.manager_page"/></a><br>
                 <a href="${pageContext.request.contextPath}/app/admin/new-tour"><fmt:message key="common.new_tour"/></a><br>
                 <a href="${pageContext.request.contextPath}/app/logout"><fmt:message key="common.logout"/></a><br>
             </c:when>
         </c:choose>
+        </td>
+    </tr>
+    <tr>
+        <td><h3><fmt:message key="common.navigation.header"/></h3>
+            <a href="${pageContext.request.contextPath}/app/display-tours"><fmt:message key="common.navigation.tours"/></a><br>
         </td>
     </tr>
     <table/>

@@ -1,14 +1,11 @@
 package ua.skidchenko.touristic_agency.controller.command.user;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
-import ua.skidchenko.touristic_agency.controller.util.Page;
-import ua.skidchenko.touristic_agency.dao.OrderOfTours;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.entity.Check;
-import ua.skidchenko.touristic_agency.service.TourService;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;

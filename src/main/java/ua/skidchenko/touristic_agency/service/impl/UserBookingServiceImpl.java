@@ -1,22 +1,15 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
-import ua.skidchenko.touristic_agency.controller.util.Page;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dao.UserDao;
 import ua.skidchenko.touristic_agency.entity.Check;
-import ua.skidchenko.touristic_agency.entity.Tour;
-import ua.skidchenko.touristic_agency.entity.User;
-import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
-import ua.skidchenko.touristic_agency.entity.enums.Role;
-import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
-import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import java.sql.SQLException;
-import java.util.List;
 
 
 //@Log4j2

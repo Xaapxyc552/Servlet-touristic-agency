@@ -1,6 +1,6 @@
 package ua.skidchenko.touristic_agency.controller;
 
-import ua.skidchenko.touristic_agency.dao.OrderOfTours;
+import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
 
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;

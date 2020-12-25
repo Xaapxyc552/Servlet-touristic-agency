@@ -100,21 +100,21 @@
         <td>
             <c:choose>
             <c:when test="${sessionScope.get('role') == 'ROLE_USER'}">
-                <form action="/app/user/book-tour" method="post">
+                <form action="${pageContext.request.contextPath}/app/user/book-tour" method="post">
                     <input type="hidden" name="tour_id" value="${tour.id}"/>
                         <%--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
                     <input type="submit" value="<fmt:message key="tour.book_tour"/>">
                 </form>
             </c:when>
             <c:when test="${sessionScope.get('role') == 'ROLE_ADMIN'}">
-            <form action="/app/admin/edit-tour" method="get">
+            <form action="${pageContext.request.contextPath}/app/admin/edit-tour" method="get">
                 <input type="hidden" name="tour_id" value="${tour.id}"/>
                     <%--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
                 <input type="submit" value="<fmt:message key="tour.edit"/>">
             </form>
         </td>
         <td>
-            <form action="/app/admin/tour/delete" method="post">
+            <form action="${pageContext.request.contextPath}/app/admin/tour/delete" method="post">
                     <%--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
                 <input type="hidden" name="tour_id" value="${tour.id}"/>
                 <input type="submit" value="<fmt:message key="tour.delete"/>">

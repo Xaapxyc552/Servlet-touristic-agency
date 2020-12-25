@@ -1,4 +1,4 @@
-package ua.skidchenko.touristic_agency.controller.util;
+package ua.skidchenko.touristic_agency.dto;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,8 +1,8 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
-import ua.skidchenko.touristic_agency.controller.util.Page;
+import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
-import ua.skidchenko.touristic_agency.dao.OrderOfTours;
+import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
 import ua.skidchenko.touristic_agency.dao.TourDao;
 import ua.skidchenko.touristic_agency.dto.TourDTO;
 import ua.skidchenko.touristic_agency.entity.Tour;
@@ -12,7 +12,6 @@ import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 
 import ua.skidchenko.touristic_agency.service.TourService;
 
-import java.util.*;
 import java.util.stream.Collectors;
 
 //@Service
