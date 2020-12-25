@@ -1,13 +1,15 @@
 package ua.skidchenko.touristic_agency.dto;
 
+import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.enums.HotelType;
+import ua.skidchenko.touristic_agency.entity.enums.TourType;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TourDTO {
 
@@ -27,7 +29,7 @@ public class TourDTO {
 
     @NotNull(message = "Price field null!")
     @NotBlank(message = "Price field blank!")
-    @Pattern(regexp = "^[0-9]*$", message = "Price should be integer positive!")
+    @Pattern(regexp = "^[0-9]+(\\.[0-9]{1,2})?$", message = "Price should be integer positive!")
     private String price;
 
     @NotNull(message = "Tour types field null!")
@@ -56,6 +58,45 @@ public class TourDTO {
     }
 
     public TourDTO() {
+    }
+
+    public static TourDTO buildTourDTOFromRequest(HttpServletRequest request) {
+        String engLangCode = "en_GB";
+        String ukrLangCode = "uk_UA";
+        Map<String, String> names = new HashMap<>();
+        Map<String, String> descriptions = new HashMap<>();
+        names.put(ukrLangCode, request.getParameter("name_uk_UA"));
+        names.put(engLangCode, request.getParameter("name_en_GB"));
+        descriptions.put(ukrLangCode, request.getParameter("description_uk_UA"));
+        descriptions.put(engLangCode, request.getParameter("description_en_GB"));
+        return TourDTO.builder()
+                .name(names)
+                .description(descriptions)
+                .id(request.getParameter("tour_id"))
+                .burning(request.getParameter("burning"))
+                .amountOfPersons(request.getParameter("amountOfPersons"))
+                .price(request.getParameter("price"))
+                .hotelType(HotelType.valueOf(request.getParameter("hotelType")))
+                .tourTypes(
+                        Arrays.asList(request.getParameterValues("tourTypes"))
+                )
+                .build();
+    }
+
+    public static TourDTO buildTourDTOFromTour(Tour tour) {
+        return TourDTO.builder()
+                .id(String.valueOf(tour.getId()))
+                .amountOfPersons(String.valueOf(tour.getAmountOfPersons()))
+                .description(tour.getDescription())
+                .name(tour.getName())
+                .price(String.valueOf(tour.getPrice()))
+                .hotelType(tour.getHotelType())
+                .tourTypes(
+                        tour.getTourTypes().stream()
+                                .map(TourType::getType)
+                                .map(String::valueOf)
+                                .collect(Collectors.toList())
+                ).build();
     }
 
     public static TourDTOBuilder builder() {

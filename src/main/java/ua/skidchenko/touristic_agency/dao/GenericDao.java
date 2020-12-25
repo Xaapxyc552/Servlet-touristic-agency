@@ -7,6 +7,6 @@ import java.sql.SQLException;
 public interface GenericDao<T> extends AutoCloseable{
 
     T create (T entity);
-    T update(T entity) throws SQLException;
+    T update(T entity);
     void delete(int id);
 }

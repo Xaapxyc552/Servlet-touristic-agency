@@ -429,7 +429,7 @@ public class JDBCCheckDao implements CheckDao {
     }
 
     @Override
-    public Check update(Check entity) throws SQLException {
+    public Check update(Check entity) {
         return null;
     }
 

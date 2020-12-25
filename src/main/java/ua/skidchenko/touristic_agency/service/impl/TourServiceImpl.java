@@ -39,7 +39,7 @@ public class TourServiceImpl implements TourService {
     @Override
     public Tour saveNewTour(TourDTO tourDTO) {
 //        log.info("Saving new into DB tour built from DTO: " + tourDTO.toString());
-        Tour newTour = buildNewTourFromTourDTO(tourDTO);
+        Tour newTour = Tour.buildTourFromTourDTO(tourDTO);
         return tourDao.create(newTour);
     }
 
@@ -51,63 +51,22 @@ public class TourServiceImpl implements TourService {
 //                    log.warn("Tour not present in DB. Tour ID:" + tourId);
                     throw new NotPresentInDatabaseException("Tour not present in DB. Tour ID:" + tourId);
                 });
-        return TourDTO.builder()
-                .id(String.valueOf(tour.getId()))
-                .amountOfPersons(String.valueOf(tour.getAmountOfPersons()))
-                .description(tour.getDescription())
-                .name(tour.getName())
-                .price(String.valueOf(tour.getPrice()))
-                .hotelType(tour.getHotelType())
-                .tourTypes(
-                        tour.getTourTypes().stream()
-                                .map(String::valueOf)
-                                .collect(Collectors.toList())
-                ).build();
+        return TourDTO.buildTourDTOFromTour(tour);
     }
 
-//    @Override
-//    @Transactional
-//    public Tour updateTourAfterChanges(TourDTO tourDTO) {
+    @Override
+    public Tour updateTourAfterChanges(TourDTO tourDTO) {
 //        log.info("Updating tour with data from tourDTO: " + tourDTO.toString());
-//        Optional<Tour> byId = tourRepository.findByIdAndTourStatusIn(Long.valueOf(tourDTO.getId()),
-//                Collections.singletonList(TourStatus.WAITING));
-//        if (!byId.isPresent()) {
-//            throw new TourNotPresentInDBException("Tour was deleted from DB during editing.");
-//        }
-//        Tour tourToSave = buildNewTourFromTourDTO(tourDTO);
-//        tourRepository.save(tourToSave);
-//        return tourToSave;
-//    }
+        Tour tourToSave = Tour.buildTourFromTourDTO(tourDTO);
+        tourDao.update(tourToSave);
+        return tourToSave;
+    }
 
     @Override
-    //TODO transactional
     public void markTourAsDeleted(Long tourId) {
         tourDao.setTourAsDeleted(tourId);
     }
 
-    private Tour buildNewTourFromTourDTO(TourDTO tourDTO) {
-//        log.info("Building new tour from DTO to save or to update edited tour. TourDTO: " + tourDTO.toString());
-        Tour build = Tour.builder()
-                .tourStatus(TourStatus.WAITING)
-                .hotelType(tourDTO.getHotelType())
-                .description(tourDTO.getDescription())
-                .price(Long.valueOf(tourDTO.getPrice()))
-                .name(tourDTO.getName())
-                .amountOfPersons(
-                        Integer.parseInt(tourDTO.getAmountOfPersons())
-                )
-                .tourTypes(
-                        TourType.getTourTypesFromStringList(tourDTO.getTourTypes()
-                        )
-                ).build();
-        if (tourDTO.getBurning() != null) {
-            build.setBurning(Boolean.parseBoolean(tourDTO.getBurning()));
-        }
-        if (tourDTO.getId() != null) {
-            build.setId(Long.valueOf(tourDTO.getId()));
-        }
-        return build;
-    }
 
 
 }

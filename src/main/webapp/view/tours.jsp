@@ -47,7 +47,7 @@
 <table border="3" style="word-wrap: break-word;" width="500px">
     <tr>
         <c:forEach items="${requestScope.get('toursFromDb')}" var="tour">
-        <c:if test="${tour.burning}==true">
+        <c:if test="${tour.burning}=='true'">
             <td><fmt:message key="tour.burning"/></td>
             <td><fmt:message key="tour.burning.${tour.burning}"/></td>
         </c:if>
@@ -67,17 +67,17 @@
     <tr>
         <td><fmt:message key="tour.description"/></td>
         <c:if test="${language=='uk-ua'}">
-            <td style="width:200px;">${ tour.description["uk_UA"]}</td>
+            <td style="width:200px;">${tour.description["uk_UA"]}</td>
         </c:if>
         <c:if test="${language=='en-gb'}">
-            <td style="width:200px;">${ tour.description["en_GB"]}</td>
+            <td style="width:200px;">${tour.description["en_GB"]}</td>
         </c:if>
     </tr>
     <tr>
         <td><fmt:message key="tour.tour_type"/></td>
         <td>
             <c:forEach var="tourType" items="${tour.tourTypes}">
-                <fmt:message key="tour.tour_type.${tourType.type.name()}"/><br>
+                <fmt:message key="tour.tour_type.${tourType}"/><br>
             </c:forEach>
         </td>
     </tr>
@@ -85,7 +85,7 @@
     <tr>
         <td><fmt:message key="tour.price"/></td>
         <td>
-                <%--        <@commonMacro.showMoneyByLocale tour.price "${requestContext.locale}" dollarCourse/>--%>
+               ${tour.price} <fmt:message key="money.sign"/>
         </td>
     </tr>
     <tr>

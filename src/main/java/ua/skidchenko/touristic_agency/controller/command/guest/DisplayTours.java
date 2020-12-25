@@ -1,8 +1,10 @@
 package ua.skidchenko.touristic_agency.controller.command.guest;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
+import ua.skidchenko.touristic_agency.controller.util.MoneyTransformer;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
+import ua.skidchenko.touristic_agency.dto.TourDTO;
 import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.service.TourService;
 
@@ -50,7 +52,15 @@ public class DisplayTours implements Command {
         Page<Tour> pageOfSortedTours = tourService.getPagedWaitingToursOrderedByArgs(
                 orderOfTours, direction, currentPage
         );
-        request.setAttribute("toursFromDb", pageOfSortedTours.getContent());
+        List<TourDTO> collect = pageOfSortedTours.getContent()
+                .stream()
+                .map(TourDTO::buildTourDTOFromTour)
+                .peek(n -> n.setPrice(
+                MoneyTransformer.getInstance().transformToCurrency(
+                        Integer.parseInt(n.getPrice()),
+                        request)))
+                .collect(Collectors.toList());
+        request.setAttribute("toursFromDb", collect);
         request.setAttribute("pagesSequence",getPagesSequence(pageOfSortedTours.getAmountOfPages()));
         return "/view/tours.jsp";
     }

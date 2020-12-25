@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.controller.command.admin;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
+import ua.skidchenko.touristic_agency.controller.util.MoneyTransformer;
 import ua.skidchenko.touristic_agency.dto.TourDTO;
 import ua.skidchenko.touristic_agency.entity.enums.HotelType;
 import ua.skidchenko.touristic_agency.service.TourService;
@@ -24,40 +25,19 @@ public class UpdateEditedTour implements Command {
 
     @Override
     public String execute(HttpServletRequest request) {
-        TourDTO tourToEdit = buildTourDTOFromRequest(request);
+        TourDTO tourToEdit = TourDTO.buildTourDTOFromRequest(request);
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<TourDTO>> validate = validator.validate(tourToEdit);
-        if (!validate.isEmpty()) {
+        Set<ConstraintViolation<TourDTO>> validationErrors = validator.validate(tourToEdit);
+        if (!validationErrors.isEmpty()) {
             request.setAttribute("tourToEdit",tourToEdit);
+            request.setAttribute("validationErrors",validationErrors);
+            return "/view/admin/editTour.jsp";
         }
+        tourToEdit.setPrice(MoneyTransformer.getInstance().transformToKopecks(
+                Double.parseDouble(tourToEdit.getPrice())
+                ,request));
+        tourService.updateTourAfterChanges(tourToEdit);
         request.setAttribute("tourToEdit", tourToEdit);
         return "redirect:/app/display-tours";
     }
-
-    private TourDTO buildTourDTOFromRequest (HttpServletRequest request) {
-        String engLangCode = "en_GB";
-        String ukrLangCode = "uk_UA";
-        Map parameterMap = request.getParameterMap();
-        Map<String, String> names = new HashMap<>();
-        Map<String, String> descriptions = new HashMap<>();
-        names.put(ukrLangCode, request.getParameter("name_uk_UA"));
-        names.put(engLangCode, request.getParameter("name_en_GB"));
-        descriptions.put(ukrLangCode, request.getParameter("description_uk_UA"));
-        descriptions.put(engLangCode, request.getParameter("description_en_GB"));
-        return TourDTO.builder()
-                .name(names)
-                .description(descriptions)
-                .burning(request.getParameter("burning"))
-                .amountOfPersons(request.getParameter("amountOfPersons"))
-                .price(request.getParameter("price"))
-                .hotelType(HotelType.valueOf(request.getParameter("hotelType")))
-                .tourTypes(
-                        Arrays.stream(request.getParameter("tourTypes")
-                                .split(","))
-                                .collect(Collectors.toList())
-                )
-                .build();
-    }
-
-
 }

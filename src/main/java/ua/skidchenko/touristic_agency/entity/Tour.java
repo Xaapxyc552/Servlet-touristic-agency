@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.entity;
 
+import ua.skidchenko.touristic_agency.dto.TourDTO;
 import ua.skidchenko.touristic_agency.entity.enums.HotelType;
 import ua.skidchenko.touristic_agency.entity.enums.TourStatus;
 import ua.skidchenko.touristic_agency.entity.enums.TourType;
@@ -21,8 +22,8 @@ public class Tour {
     private HotelType hotelType;
 
     public Tour(Long id,
-                Map<String, String> name
-            , Map<String, String> description,
+                Map<String, String> name,
+                Map<String, String> description,
                 boolean burning, int amountOfPersons,
                 Long price, TourStatus tourStatus,
                 List<TourType> tourTypes,
@@ -39,6 +40,24 @@ public class Tour {
     }
 
     public Tour() {
+    }
+
+    public static Tour buildTourFromTourDTO(TourDTO tourDTO) {
+        return Tour.builder()
+                .tourStatus(TourStatus.WAITING)
+                .hotelType(tourDTO.getHotelType())
+                .description(tourDTO.getDescription())
+                .price(Long.valueOf(tourDTO.getPrice()))
+                .name(tourDTO.getName())
+                .amountOfPersons(
+                        Integer.parseInt(tourDTO.getAmountOfPersons())
+                )
+                .id(Long.valueOf(tourDTO.getId()))
+                .burning(Boolean.parseBoolean(tourDTO.getBurning()))
+                .tourTypes(
+                        TourType.getTourTypesFromStringList(tourDTO.getTourTypes()
+                        )
+                ).build();
     }
 
     public static TourBuilder builder() {
