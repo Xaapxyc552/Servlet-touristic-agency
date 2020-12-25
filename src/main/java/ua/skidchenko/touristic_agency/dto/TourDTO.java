@@ -86,6 +86,7 @@ public class TourDTO {
     public static TourDTO buildTourDTOFromTour(Tour tour) {
         return TourDTO.builder()
                 .id(String.valueOf(tour.getId()))
+                .burning(String.valueOf(tour.isBurning()))
                 .amountOfPersons(String.valueOf(tour.getAmountOfPersons()))
                 .description(tour.getDescription())
                 .name(tour.getName())

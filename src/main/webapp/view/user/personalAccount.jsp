@@ -15,10 +15,12 @@
 <fmt:message key="personal_page.email"/>${sessionScope.get('email')}<br>
 <fmt:message key="personal_page.username"/>${sessionScope.get('username')}<br>
 <fmt:message key="personal_page.role"/>${sessionScope.get('role')}<br>
-<fmt:message key="personal_page.money"/>
-<%--<@commonMacro.showMoneyByLocale money "${requestContext.locale}" dollarCourse/><br>--%>
-<br>
-<form action="/user/recharge" method="post">
+<fmt:message key="personal_page.money"/>${requestScope.get('money')} <fmt:message key="money.sign"/><br>
+<c:if test="${isAmountOfChargeNotCorrect=='true'}" >
+    <fmt:message key="personal_page.amount_of_recharge.error"/>
+</c:if>
+
+<form action="${pageContext.request.contextPath}/app/user/recharge-account" method="post">
     <%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
     <fmt:message key="personal_page.recharge"/><br>
     <label for="amountOfCharge"><input type="number" id="amountOfCharge" name="amountOfCharge"></label>
