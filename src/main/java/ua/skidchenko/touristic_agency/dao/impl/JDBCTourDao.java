@@ -322,8 +322,4 @@ public class JDBCTourDao implements TourDao {
     public void delete(int id) {
 
     }
-
-    @Override
-    public void close() throws Exception {
-    }
 }

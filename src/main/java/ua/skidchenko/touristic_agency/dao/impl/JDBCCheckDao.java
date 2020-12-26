@@ -497,9 +497,4 @@ public class JDBCCheckDao implements CheckDao {
     public void delete(int id) {
 
     }
-
-    @Override
-    public void close() throws Exception {
-
-    }
 }

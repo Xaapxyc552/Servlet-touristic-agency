@@ -5,6 +5,7 @@ import ua.skidchenko.touristic_agency.dao.UserDao;
 import ua.skidchenko.touristic_agency.dao.rowmapper.impl.UserRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
+import ua.skidchenko.touristic_agency.exceptions.UsernameExistsException;
 
 import java.sql.*;
 import java.util.Optional;
@@ -46,8 +47,12 @@ public class JDBCUserDao implements UserDao {
             return entity;
         } catch (SQLException e) {
             e.printStackTrace();
+            switch (e.getSQLState()) {
+                case ("23505"):
+                    throw new UsernameExistsException();
+                default:throw new IllegalStateException("Unhandled exception while creating a user");
+            }
         }
-        return entity;
     }
 
     @Override
@@ -72,11 +77,6 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public void delete(int id) {
-
-    }
-
-    @Override
-    public void close() throws Exception {
 
     }
 

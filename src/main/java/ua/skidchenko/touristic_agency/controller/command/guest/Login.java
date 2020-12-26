@@ -19,12 +19,11 @@ public class Login implements Command {
         request.getSession().invalidate();
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        System.out.println(username + " " + password);
         if (username == null || username.equals("") || password == null || password.equals("")) {
             return "/view/login.jsp";
         }
         Optional<User> userByUsername = userService.getUserByUsername(username);
-        if (userByUsername.isPresent() && userByUsername.get().getPassword().   equals(password)) {
+        if (userByUsername.isPresent() && userByUsername.get().getPassword().equals(password)) {
             User user = userByUsername.get();
             request.getSession().setAttribute("username", user.getUsername());
             request.getSession().setAttribute("firstname", user.getFirstname());
