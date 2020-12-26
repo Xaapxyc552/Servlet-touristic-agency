@@ -20,8 +20,8 @@ public class LocalizationFilter implements Filter {
         String language = servletRequest.getParameter("language");
         if (language != null && !language.isEmpty()) {
             HttpServletResponse resp = (HttpServletResponse) servletResponse;
-            Locale localeToSet = new Locale(language);
-            resp.addCookie(new Cookie("language",localeToSet.toString()));
+            Locale localeToSet = Locale.forLanguageTag(language);
+            resp.addCookie(new Cookie("language",localeToSet.toLanguageTag()));
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

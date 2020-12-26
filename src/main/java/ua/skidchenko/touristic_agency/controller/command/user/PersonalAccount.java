@@ -2,6 +2,7 @@ package ua.skidchenko.touristic_agency.controller.command.user;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.controller.util.MoneyTransformer;
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.User;
@@ -29,20 +30,24 @@ public class PersonalAccount implements Command {
     public String execute(HttpServletRequest request) {
         int currentPage = request.getParameter("currentPage") == null
                 ? 0 : Integer.parseInt(request.getParameter("currentPage"));
-        try {
-            Page<Check> checksByUsername = userBookingService.findAllChecksByUsernameOrderByStatus(
-                    (String) request.getSession().getAttribute("username"),
-                    currentPage);
-            request.setAttribute("checkToDisplay", checksByUsername.getContent());
-            request.setAttribute("currentPage", currentPage);
-            request.setAttribute("pagesSequence", getPagesSequence(checksByUsername.getAmountOfPages()));
-            User user = userService.
-                    getUserByUsername((String) (request.getSession().getAttribute("username"))).get();
-            int money = Math.toIntExact(user.getMoney());
-            request.setAttribute("money", MoneyTransformer.getInstance().transformToCurrency(money,request));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Page<CheckDTO> checksByUsername = userBookingService.findAllChecksByUsernameOrderByStatus(
+                (String) request.getSession().getAttribute("username"),
+                currentPage);
+        List<CheckDTO> checksToDisplay = checksByUsername
+                .getContent()
+                .stream()
+                .peek(n -> n.setTotalPrice(
+                        MoneyTransformer.getInstance().transformToCurrency(
+                                Math.toIntExact(Long.parseLong(n.getTotalPrice())), request)))
+                .collect(Collectors.toList());
+        request.setAttribute("checkToDisplay", checksToDisplay);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("pagesSequence", getPagesSequence(checksByUsername.getAmountOfPages()));
+        User user = userService.
+                getUserByUsername((String) (request.getSession().getAttribute("username"))).get();
+        int money = Math.toIntExact(user.getMoney());
+        request.setAttribute("money", MoneyTransformer.getInstance().transformToCurrency(money, request));
+
         return "/view/user/personalAccount.jsp";
     }
 

@@ -1,12 +1,10 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
-import ua.skidchenko.touristic_agency.dao.TourDao;
-import ua.skidchenko.touristic_agency.dao.UserDao;
-import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import java.sql.SQLException;
@@ -19,8 +17,6 @@ public class UserBookingServiceImpl implements UserBookingService {
     private static final int PAGE_SIZE =
             Integer.parseInt(ResourceBundle.getBundle("common").getString("page.size"));
     private final CheckDao checkDao = DaoFactory.getInstance().createCheckDao();
-    private final UserDao userDao = DaoFactory.getInstance().createUserDao();
-    private final TourDao tourDao = DaoFactory.getInstance().createTourDao();
 
     @Override
     public void bookTourByIdForUsername(Long tourId, String username) {
@@ -31,14 +27,10 @@ public class UserBookingServiceImpl implements UserBookingService {
     }
 
     @Override
-    public Page<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException {
+    public Page<CheckDTO> findAllChecksByUsernameOrderByStatus(String username, int page)  {
 //        log.info("Retrieving paged user's checks ordered by status. Username: " +
 //                "" + username + ". Page: " + page);
-        try {
-            return checkDao.findAllByUserOrderByStatus(username, PAGE_SIZE, page);
-        } catch (SQLException e) {
-            throw new SQLException("Exception during retrieving checks from DB.", e);
-        }
+            return checkDao.findAllCheckDTOByUserOrderByStatus(username, PAGE_SIZE, page);
     }
 
     @Override

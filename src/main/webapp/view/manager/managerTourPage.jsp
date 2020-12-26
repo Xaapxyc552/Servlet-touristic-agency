@@ -26,10 +26,10 @@
         </tr>
         <tr>
             <th><fmt:message key="check.tour_name"/></th>
-            <c:if test="${language=='uk-ua'}">
+            <c:if test="${language=='uk-UA'}">
                 <td style="width:200px;">${check.tour.name["uk_UA"]}</td>
             </c:if>
-            <c:if test="${language=='en-gb'}">
+            <c:if test="${language=='en-GB'}">
                 <td style="width:200px;">${check.tour.name["en_GB"]}</td>
             </c:if>
         </tr>

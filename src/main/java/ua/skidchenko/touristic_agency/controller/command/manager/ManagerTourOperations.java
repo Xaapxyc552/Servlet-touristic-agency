@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.controller.command.manager;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.service.client_services.ManagerBookingService;
@@ -22,7 +23,7 @@ public class ManagerTourOperations implements Command {
     public String execute(HttpServletRequest request) {
         int currentPage = request.getParameter("currentPage") == null
                 ? 0 : Integer.parseInt(request.getParameter("currentPage"));
-        Page<Check> pagedWaitingChecks = managerBookingService.getPagedWaitingChecks(currentPage);
+        Page<CheckDTO> pagedWaitingChecks = managerBookingService.getPagedWaitingChecks(currentPage);
         request.setAttribute("waitingChecks",pagedWaitingChecks.getContent());
         request.setAttribute("currentPage",currentPage);
         request.setAttribute("pagesSequence",getPagesSequence(pagedWaitingChecks.getAmountOfPages()));

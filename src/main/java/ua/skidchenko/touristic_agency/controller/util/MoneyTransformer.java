@@ -12,8 +12,8 @@ public class MoneyTransformer {
     private static final String PRICE = "price";
     private static MoneyTransformer moneyTransformer;
     private static final String COOKIE_LOCALE_NAME = "language";
-    private static final String ENG_LOCALE = "en-gb";
-    private static final String UKR_LOCALE = "uk-ua";
+    private static final String ENG_LOCALE = "en-GB";
+    private static final String UKR_LOCALE = "uk-UA";
     private static final String MONEY_PATTERN = "#0.00";
 
     private static final double DOLLAR_COURSE = 25.8;

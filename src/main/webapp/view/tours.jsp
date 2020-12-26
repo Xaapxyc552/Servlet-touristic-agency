@@ -56,10 +56,10 @@
         </c:if>
         <tr>
             <td><fmt:message key="tour.name"/></td>
-            <c:if test="${language=='uk-ua'}">
+            <c:if test="${language=='uk-UA'}">
                 <td>${tour.name["uk_UA"]}</td>
             </c:if>
-            <c:if test="${language=='en-gb'}">
+            <c:if test="${language=='en-GB'}">
                 <td>${tour.name["en_GB"]}</td>
             </c:if>
 
@@ -68,10 +68,10 @@
         </tr>
         <tr>
             <td><fmt:message key="tour.description"/></td>
-            <c:if test="${language=='uk-ua'}">
+            <c:if test="${language=='uk-UA'}">
                 <td style="width:200px;">${tour.description["uk_UA"]}</td>
             </c:if>
-            <c:if test="${language=='en-gb'}">
+            <c:if test="${language=='en_GB'}">
                 <td style="width:200px;">${tour.description["en_GB"]}</td>
             </c:if>
         </tr>

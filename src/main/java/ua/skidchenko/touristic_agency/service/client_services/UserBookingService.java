@@ -1,14 +1,14 @@
 package ua.skidchenko.touristic_agency.service.client_services;
 
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
-import ua.skidchenko.touristic_agency.entity.Check;
 
 import java.sql.SQLException;
 
 public interface UserBookingService {
     void bookTourByIdForUsername(Long tourId, String username);
 
-    Page<Check> findAllChecksByUsernameOrderByStatus(String username, int page) throws SQLException;
+    Page<CheckDTO> findAllChecksByUsernameOrderByStatus(String username, int page);
 
     void cancelBookingByCheckId(Long checkId) throws SQLException;
 }

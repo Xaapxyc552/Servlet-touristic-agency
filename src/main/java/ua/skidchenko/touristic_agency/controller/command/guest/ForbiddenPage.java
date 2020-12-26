@@ -8,6 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 public class ForbiddenPage implements Command {
     @Override
     public String execute(HttpServletRequest request) {
-        return "/view/forbidden.jsp";
+        return "/view/errorPage.jsp";
     }
 }

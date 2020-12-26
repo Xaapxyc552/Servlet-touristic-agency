@@ -55,6 +55,6 @@ public class ConnectionPool implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        dataSource.close(true);
     }
 }

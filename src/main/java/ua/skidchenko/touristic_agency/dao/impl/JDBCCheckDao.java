@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.connection_source.ConnectionPool;
@@ -11,6 +12,7 @@ import ua.skidchenko.touristic_agency.entity.Tour;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
 import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
+import ua.skidchenko.touristic_agency.exceptions.UserHasNoMoneyException;
 
 import java.sql.*;
 import java.util.*;
@@ -45,6 +47,37 @@ public class JDBCCheckDao implements CheckDao {
                     "    and descukr.lang_code = 'uk_UA'" +
                     "         join touristic_agency.description_translation_mapping desceng on desceng.tour_id = main_tour.id" +
                     "    and desceng.lang_code = 'en_GB'" +
+                    "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
+                    "    and nameukr.lang_code = 'uk_UA'" +
+                    "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
+                    "    and nameeng.lang_code = 'en_GB'" +
+                    "         join (select tour_id, string_agg(tour_type.type, ',') as tour_types" +
+                    "               from touristic_agency.tour" +
+                    "                        left join touristic_agency.tour__tour_type on tour.id = tour__tour_type.tour_id" +
+                    "                        left join touristic_agency.tour_type on tour__tour_type.tour_type_id = tour_type.id" +
+                    "               group by tour_id) as tour_types on tour_types.tour_id = main_tour.id" +
+                    "         right join touristic_agency.check checks on main_tour.id = checks.tour_id" +
+                    "         join touristic_agency.check_status on touristic_agency.check_status.id = checks.status_id" +
+                    "         join touristic_agency.user users on checks.user_id = users.id " +
+                    "where tour_status IN ('REGISTERED','WAITING','SOLD')" +
+                    "  AND (username = ?)" +
+                    " order by (case status " +
+                    "              when 'WAITING_FOR_CONFIRM' then 1" +
+                    "              when 'CONFIRMED' then 2" +
+                    "              when 'DECLINED' then 3" +
+                    "              when 'CANCELED' then 4" +
+                    "    end) limit ? offset ?;";
+
+    private static final String GET_CHECK_FOR_CHECK_DTO =
+            "select main_tour.id," +
+                    "       nameukr.name        as nameukr," +
+                    "       nameeng.name        as nameeng," +
+                    "       checks.total_price," +
+                    "       check_status.status as check_status," +
+                    "       checks.id           as check_id," +
+                    "       users.email," +
+                    "       users.username " +
+                    " from touristic_agency.tour main_tour " +
                     "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
                     "    and nameukr.lang_code = 'uk_UA'" +
                     "         join touristic_agency.name_translation_mapping nameeng on nameeng.name_id = main_tour.id" +
@@ -278,7 +311,7 @@ public class JDBCCheckDao implements CheckDao {
                     "commit;";
 
     @Override
-    public Page<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum) throws SQLException {
+    public Page<Check> findAllByUserOrderByStatus(String username, int pageSize, int pageNum)  {
         List<Check> checks;
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(GET_CHECK_WITH_TOUR_AND_USER);
@@ -305,13 +338,44 @@ public class JDBCCheckDao implements CheckDao {
 
             return new Page<>(checks, (int) Math.ceil((double) countOfRows.getInt(1) / pageSize), pageNum);
         } catch (SQLException e) {
-            throw new SQLException("Exception while retrieving checks from DB.", e);
+            e.printStackTrace();
         }
+        //TODO сдеалать в конце концов эксепшены
+        return Page.empty();
     }
 
     @Override
-    public Page<Check> findAllByStatus(CheckStatus status, int pageSize, int pageNum) {
-        List<Check> checks = new ArrayList<>();
+    public Page<CheckDTO> findAllCheckDTOByUserOrderByStatus(String username, int pageSize, int pageNum)  {
+        List<CheckDTO> checks;
+        try (Connection connection = ConnectionPool.getConnection();
+             PreparedStatement ps = connection.prepareStatement(GET_CHECK_FOR_CHECK_DTO);
+             PreparedStatement st = connection.prepareStatement(COUNT_ALL_USERS_CHECKS)) {
+            ps.setString(1, username);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, pageNum * pageSize);
+            ResultSet resultSet = ps.executeQuery();
+            TourRowMapper tourRowMapper = new TourRowMapper();
+            UserRowMapper userRowMapper = new UserRowMapper();
+            CheckRowMapper checkRowMapper = new CheckRowMapper();
+            checks = new ArrayList<>();
+            while (resultSet.next()) {
+                CheckDTO check = checkRowMapper.mapRowToCheckDTO(resultSet);
+                checks.add(check);
+            }
+            st.setString(1, username);
+            ResultSet countOfRows = st.executeQuery();
+            countOfRows.next();
+            return new Page<>(checks, (int) Math.ceil((double) countOfRows.getInt(1) / pageSize), pageNum);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //TODO сдеалать в конце концов эксепшены
+        return Page.empty();
+    }
+
+    @Override
+    public Page<CheckDTO> findAllByStatus(CheckStatus status, int pageSize, int pageNum) {
+        List<CheckDTO> checks = new ArrayList<>();
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(GET_ALL_WAITING_FOR_CONFORMATION);
              Statement st = connection.createStatement()) {
@@ -319,15 +383,10 @@ public class JDBCCheckDao implements CheckDao {
             TourRowMapper tourRowMapper = new TourRowMapper();
             UserRowMapper userRowMapper = new UserRowMapper();
             CheckRowMapper checkRowMapper = new CheckRowMapper();
-            Check check;
-            Tour tour;
-            User user;
+            CheckDTO check;
+
             while (resultSet.next()) {
-                check = checkRowMapper.mapRow(resultSet);
-                tour = tourRowMapper.mapRow(resultSet);
-                user = userRowMapper.mapRow(resultSet);
-                check.setUser(user);
-                check.setTour(tour);
+                check = checkRowMapper.mapRowToCheckDTO(resultSet);
                 checks.add(check);
             }
             ResultSet countOfRows = st.executeQuery(COUNT_ALL_WAITING_FOR_CONFIRMATION);
@@ -378,8 +437,9 @@ public class JDBCCheckDao implements CheckDao {
             ps.setLong(7, tourId);
             ps.executeUpdate();
         } catch (SQLException e) {
-//            case (e.getSQLState())
-            e.printStackTrace();
+            switch (e.getSQLState()){
+                case ("23514"): throw new UserHasNoMoneyException();
+            }
         }
     }
 

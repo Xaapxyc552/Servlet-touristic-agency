@@ -12,9 +12,11 @@
 <html lang="${language}">
 <head>
     <title></title>
-<h1><fmt:message key="page.forbidden"/></h1>
 </head>
 <body>
+<jsp:include page="common/common.jsp"/>
+<br>
+<h1>${requestScope.get('localizedMessage')}</h1>
 
 </table>
 </body>

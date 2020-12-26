@@ -39,17 +39,17 @@
     <c:forEach var="check" items="${requestScope.get('checkToDisplay')}">
         <tr>
             <th><fmt:message key="check.tour_name"/></th>
-            <c:if test="${language=='uk-ua'}">
-                <td>${check.tour.name["uk_UA"]}</td>
+            <c:if test="${language=='uk-UA'}">
+                <td>${check.tourName["uk_UA"]}</td>
             </c:if>
-            <c:if test="${language=='en-gb'}">
-                <td>${check.tour.name["en_GB"]}</td>
+            <c:if test="${language=='en-GB'}">
+                <td>${check.tourName["en_GB"]}</td>
             </c:if>
         </tr>
         <tr>
             <th><fmt:message key="check.total_price"/></th>
             <th>
-                    <%--            <@commonMacro.showMoneyByLocale check.totalPrice "${requestContext.locale}" dollarCourse/>--%>
+            <td>${check.totalPrice}</td>
             </th>
         </tr>
         <tr>
@@ -71,7 +71,5 @@
         <tr>
             <th><br></th>
         </tr>
-        <%--<#else> <fmt:message key="check.you_dont_have_bookings_yet"/>--%>
     </c:forEach>
 </table>
-<#--//счет,имя, роль, ссылки на другие места-->

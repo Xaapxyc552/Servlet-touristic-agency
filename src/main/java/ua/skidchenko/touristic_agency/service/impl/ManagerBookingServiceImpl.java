@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
+import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
@@ -17,7 +18,7 @@ public class ManagerBookingServiceImpl implements ManagerBookingService {
     private int pageSize = 5;
 
     @Override
-    public Page<Check> getPagedWaitingChecks(int currentPage) {
+    public Page<CheckDTO> getPagedWaitingChecks(int currentPage) {
 //        log.info("Starting retrieving waiting checks from DB.");
         return checkDao.findAllByStatus(
                 CheckStatus.getInstanceByEnum(CheckStatus.Status.WAITING_FOR_CONFIRM), pageSize, currentPage
