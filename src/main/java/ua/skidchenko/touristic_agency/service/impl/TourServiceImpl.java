@@ -1,5 +1,7 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
@@ -13,8 +15,10 @@ import ua.skidchenko.touristic_agency.service.TourService;
 
 import java.util.ResourceBundle;
 
-//@Log4j2
 public class TourServiceImpl implements TourService {
+
+    private static final Logger log = LogManager.getLogger(TourServiceImpl.class.getName());
+
 
     private final TourDao tourDao = DaoFactory.getInstance().createTourDao();
     private static final int PAGE_SIZE =
@@ -22,7 +26,7 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public Tour saveTourToDB(Tour tour) {
-//        log.info("Saving tour to DB: " + tour.toString());
+        log.info("Saving tour to DB: {}",tour);
         return tourDao.create(tour);
     }
 
@@ -36,17 +40,17 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public Tour saveNewTour(TourDTO tourDTO) {
-//        log.info("Saving new into DB tour built from DTO: " + tourDTO.toString());
+        log.info("Saving new into DB tour built from DTO: {}",tourDTO);
         Tour newTour = Tour.buildTourFromTourDTO(tourDTO);
         return tourDao.create(newTour);
     }
 
     @Override
     public TourDTO getWaitingTourDTOById(Long tourId) {
-//        log.info("Retrieving new tourDTO from DB by tour ID. Tour ID: " + tourId);
+        log.info("Retrieving new tourDTO from DB by tour ID. Tour ID: {}",tourId);
         Tour tour = tourDao.findByIdAndTourStatus(tourId, TourStatus.WAITING)
                 .<NotPresentInDatabaseException>orElseThrow(() -> {
-//                    log.warn("Tour not present in DB. Tour ID:" + tourId);
+                    log.warn("Tour not present in DB. Tour ID: {}",tourId);
                     throw new NotPresentInDatabaseException("Tour not present in DB. Tour ID:" + tourId);
                 });
         return TourDTO.buildTourDTOFromTour(tour);
@@ -54,7 +58,7 @@ public class TourServiceImpl implements TourService {
 
     @Override
     public Tour updateTourAfterChanges(TourDTO tourDTO) {
-//        log.info("Updating tour with data from tourDTO: " + tourDTO.toString());
+        log.info("Updating tour with data from tourDTO: {}",tourDTO);
         Tour tourToSave = Tour.buildTourFromTourDTO(tourDTO);
         tourDao.update(tourToSave);
         return tourToSave;

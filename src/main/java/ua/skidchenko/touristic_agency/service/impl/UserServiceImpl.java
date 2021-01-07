@@ -1,10 +1,11 @@
 package ua.skidchenko.touristic_agency.service.impl;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.skidchenko.touristic_agency.dto.UserDTO;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
 import ua.skidchenko.touristic_agency.entity.User;
-import ua.skidchenko.touristic_agency.exceptions.UsernameExistsException;
 import ua.skidchenko.touristic_agency.service.UserService;
 
 import java.util.Optional;
@@ -12,8 +13,9 @@ import java.util.Optional;
 //@Log4j2
 public class UserServiceImpl extends UserService {
 
-    @Override
+    private static final Logger log = LogManager.getLogger(UserServiceImpl.class.getName());
 
+    @Override
     public User saveUser(UserDTO userDTO) {
         return userDao.create(buildUserFromDTO(userDTO));
     }
@@ -25,12 +27,12 @@ public class UserServiceImpl extends UserService {
 
     @Override
     public void chargeUserWallet(Long amountOfCharge, String username) {
-//        log.info("Starting recharging user`s account. Amount: " + amountOfCharge + ". Username: " + username);
+        log.info("Starting recharging user`s account. Amount: {}. Username: {}", amountOfCharge, username);
         userDao.rechargeUserWallet(amountOfCharge, username);
     }
 
     private User buildUserFromDTO(UserDTO userDTO) {
-//        log.info("Building new user from userDTO. UserDTO: " + userDTO.toString());
+        log.info("Building new user from userDTO. UserDTO:{}", userDTO);
         return User.builder()
                 .password(
                         //TODO подключить пассворд энкоер BCrypt

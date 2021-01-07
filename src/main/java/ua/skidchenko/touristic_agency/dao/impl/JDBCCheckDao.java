@@ -1,5 +1,7 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.CheckDao;
@@ -18,6 +20,8 @@ import java.sql.*;
 import java.util.*;
 
 public class JDBCCheckDao implements CheckDao {
+
+    private static final Logger log = LogManager.getLogger(JDBCCheckDao.class.getName()) ;
 
     private static final String GET_CHECK_WITH_TOUR_AND_USER =
             "select main_tour.id," +
@@ -354,8 +358,6 @@ public class JDBCCheckDao implements CheckDao {
             ps.setInt(2, pageSize);
             ps.setInt(3, pageNum * pageSize);
             ResultSet resultSet = ps.executeQuery();
-            TourRowMapper tourRowMapper = new TourRowMapper();
-            UserRowMapper userRowMapper = new UserRowMapper();
             CheckRowMapper checkRowMapper = new CheckRowMapper();
             checks = new ArrayList<>();
             while (resultSet.next()) {
@@ -380,8 +382,6 @@ public class JDBCCheckDao implements CheckDao {
              PreparedStatement ps = connection.prepareStatement(GET_ALL_WAITING_FOR_CONFORMATION);
              Statement st = connection.createStatement()) {
             ResultSet resultSet = ps.executeQuery();
-            TourRowMapper tourRowMapper = new TourRowMapper();
-            UserRowMapper userRowMapper = new UserRowMapper();
             CheckRowMapper checkRowMapper = new CheckRowMapper();
             CheckDTO check;
 
@@ -438,7 +438,10 @@ public class JDBCCheckDao implements CheckDao {
             ps.executeUpdate();
         } catch (SQLException e) {
             switch (e.getSQLState()){
-                case ("23514"): throw new UserHasNoMoneyException();
+                case ("23514"): {
+                    log.warn("User has not enough money. throwing exception");
+                    throw new UserHasNoMoneyException();
+                }
             }
         }
     }

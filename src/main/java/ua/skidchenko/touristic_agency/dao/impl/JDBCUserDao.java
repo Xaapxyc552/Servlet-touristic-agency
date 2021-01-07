@@ -27,7 +27,7 @@ public class JDBCUserDao implements UserDao {
 
     private static final String RECHARGE_USER_WALLET =
             "update touristic_agency.\"user\" " +
-                    "set money = ? where id = ?;";
+                    "set money = (select max(money) from touristic_agency.\"user\" where username=?)+? where username = ?;";
 
     @Override
     public User create(User entity) {
@@ -77,7 +77,6 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public void delete(int id) {
-
     }
 
     @Override
@@ -121,8 +120,9 @@ public class JDBCUserDao implements UserDao {
     public void rechargeUserWallet(Long amountOfCharge, String username) {
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(RECHARGE_USER_WALLET)) {
-            ps.setLong(1, amountOfCharge);
-            ps.setString(2, username);
+            ps.setString(1, username);
+            ps.setLong(2, amountOfCharge);
+            ps.setString(3, username);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
