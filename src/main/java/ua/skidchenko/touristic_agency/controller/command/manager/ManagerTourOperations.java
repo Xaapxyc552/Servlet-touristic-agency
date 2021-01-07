@@ -3,7 +3,6 @@ package ua.skidchenko.touristic_agency.controller.command.manager;
 import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
-import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.service.client_services.ManagerBookingService;
 
 import javax.servlet.http.HttpServletRequest;

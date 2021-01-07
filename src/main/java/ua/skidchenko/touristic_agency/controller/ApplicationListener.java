@@ -4,7 +4,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 @WebListener
 public class ApplicationListener implements ServletContextListener {
@@ -16,6 +15,6 @@ public class ApplicationListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
+        //empty
     }
 }

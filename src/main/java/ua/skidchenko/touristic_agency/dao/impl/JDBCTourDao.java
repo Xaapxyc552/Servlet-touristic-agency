@@ -1,5 +1,7 @@
 package ua.skidchenko.touristic_agency.dao.impl;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.dao.connection_source.ConnectionPool;
 import ua.skidchenko.touristic_agency.controller.util.OrderOfTours;
@@ -14,6 +16,8 @@ import java.sql.*;
 import java.util.*;
 
 public class JDBCTourDao implements TourDao {
+
+    private static final Logger log = LogManager.getLogger(JDBCTourDao.class.getName());
 
     private static final String ENG_LANG_CODE = "en_GB";
     private static final String UKR_LAN_CODE = "uk_UA";
@@ -278,9 +282,9 @@ public class JDBCTourDao implements TourDao {
         try (Connection connection = ConnectionPool.getConnection()) {
 
             connection.setAutoCommit(false);
-            findById(tour.getId()).<NotPresentInDatabaseException>orElseThrow(
+            findById(tour.getId()).orElseThrow(
                     () -> {
-                        //log.warn("Waiting tour is not present id DB. Tour id: " + tourId);
+                        log.warn("Waiting tour is not present id DB. Tour id: {}",tour.getId());
                         throw new NotPresentInDatabaseException(
                                 "Waiting tour is not present id DB. Tour id: " + tour.getId());
                     }
@@ -320,6 +324,6 @@ public class JDBCTourDao implements TourDao {
 
     @Override
     public void delete(int id) {
-
+        throw new UnsupportedOperationException();
     }
 }

@@ -9,7 +9,6 @@ import ua.skidchenko.touristic_agency.service.impl.TourServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserBookingServiceImpl;
 import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
-import java.util.ResourceBundle;
 
 public class ServiceFactory {
     private static ServiceFactory serviceFactory;

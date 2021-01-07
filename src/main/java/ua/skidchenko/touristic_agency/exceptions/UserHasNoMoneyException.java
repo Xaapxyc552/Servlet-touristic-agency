@@ -25,9 +25,6 @@ public class UserHasNoMoneyException extends RuntimeException {
     }
 
     public String getLocalizedMessage(Locale messageLocale) {
-//        String[] split = messageLocale.toString().split("-");
-//        split[1] = split[1].toUpperCase();
-//        messageLocale = Locale.forLanguageTag(String.join("-",split));
         return ResourceBundle.getBundle("messages",messageLocale).getString("exception.user_has_no_money");
     }
 }

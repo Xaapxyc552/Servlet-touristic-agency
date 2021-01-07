@@ -2,7 +2,6 @@ package ua.skidchenko.touristic_agency.controller.command.user;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.exceptions.UserHasNoMoneyException;
-import ua.skidchenko.touristic_agency.service.TourService;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import javax.servlet.http.Cookie;

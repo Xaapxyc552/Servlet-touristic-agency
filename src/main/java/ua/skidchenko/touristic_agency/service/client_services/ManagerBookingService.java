@@ -3,7 +3,6 @@ package ua.skidchenko.touristic_agency.service.client_services;
 
 import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
-import ua.skidchenko.touristic_agency.entity.Check;
 
 public interface ManagerBookingService {
 //    @Transactional

@@ -2,10 +2,8 @@ package ua.skidchenko.touristic_agency.controller.command.guest;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.dto.UserDTO;
-import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.exceptions.UsernameExistsException;
 import ua.skidchenko.touristic_agency.service.UserService;
-import ua.skidchenko.touristic_agency.service.impl.UserServiceImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;

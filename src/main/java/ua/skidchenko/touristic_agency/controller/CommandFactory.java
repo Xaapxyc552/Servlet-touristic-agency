@@ -32,7 +32,7 @@ public class CommandFactory {
     }
 
     protected CommandFactory() {
-        this.serviceFactory = ServiceFactory.getInstance();
+        serviceFactory = ServiceFactory.getInstance();
     }
 
     public DeleteTour deleteTour() {

@@ -11,7 +11,8 @@ import java.util.Locale;
 
 public class LocalizationFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
+        //empty
     }
 
     @Override
@@ -28,5 +29,6 @@ public class LocalizationFilter implements Filter {
 
     @Override
     public void destroy() {
+        //empty
     }
 }

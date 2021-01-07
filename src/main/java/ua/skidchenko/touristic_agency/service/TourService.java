@@ -13,10 +13,8 @@ public interface TourService {
     Tour saveNewTour(TourDTO tourDTO);
 
     TourDTO getWaitingTourDTOById(Long tourId);
-    //TODO
+
     Tour updateTourAfterChanges(TourDTO tourDTO);
-//TODO
-//    Tour markTourAsDeleted(Long tourId);
 
     Page<Tour> getPagedWaitingToursOrderedByArgs(OrderOfTours orderOfTours, String direction, int currentPage);
 

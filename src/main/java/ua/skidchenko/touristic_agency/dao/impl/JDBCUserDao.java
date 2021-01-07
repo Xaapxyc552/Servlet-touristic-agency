@@ -77,6 +77,7 @@ public class JDBCUserDao implements UserDao {
 
     @Override
     public void delete(int id) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -15,7 +15,7 @@ public class Page <T>{
     }
 
     public static <T> Page<T> empty() {
-        return new Page<T>(Collections.emptyList(),0,0);
+        return new Page<>(Collections.emptyList(), 0, 0);
     }
 
     public List<T> getContent() {

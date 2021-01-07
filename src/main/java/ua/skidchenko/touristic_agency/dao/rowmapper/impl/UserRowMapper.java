@@ -3,7 +3,6 @@ package ua.skidchenko.touristic_agency.dao.rowmapper.impl;
 import ua.skidchenko.touristic_agency.dao.rowmapper.GenericRowMapper;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
-import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 import ua.skidchenko.touristic_agency.exceptions.RowMappingException;
 
 import java.sql.ResultSet;

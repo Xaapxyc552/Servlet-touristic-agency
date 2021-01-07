@@ -6,13 +6,13 @@ import ua.skidchenko.touristic_agency.entity.enums.Role;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 
 public class AuthenticationFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
+        //empty
     }
 
     @Override
@@ -39,5 +39,6 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void destroy() {
+        //empty
     }
 }

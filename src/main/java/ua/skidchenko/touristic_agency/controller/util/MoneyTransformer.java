@@ -1,15 +1,12 @@
 package ua.skidchenko.touristic_agency.controller.util;
 
-import ua.skidchenko.touristic_agency.dto.TourDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class MoneyTransformer {
 
-    private static final String PRICE = "price";
     private static MoneyTransformer moneyTransformer;
     private static final String COOKIE_LOCALE_NAME = "language";
     private static final String ENG_LOCALE = "en-GB";
@@ -37,7 +34,7 @@ public class MoneyTransformer {
             case (UKR_LOCALE):
                 return String.valueOf((int) (priceInDouble * 100));
             default:
-                throw new RuntimeException("Unsupported locale in request. " +
+                throw new IllegalStateException("Unsupported locale in request. " +
                         "Cannot transform \"price\" to presented locale view.");
         }
     }
@@ -50,7 +47,7 @@ public class MoneyTransformer {
             case (UKR_LOCALE):
                 return new DecimalFormat(MONEY_PATTERN).format((double) priceInInteger / 100);
             default:
-                throw new RuntimeException("Unsupported locale in request. " +
+                throw new IllegalStateException("Unsupported locale in request. " +
                         "Cannot transform \"price\" to presented locale view.");
         }
     }

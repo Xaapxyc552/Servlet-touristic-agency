@@ -488,16 +488,16 @@ public class JDBCCheckDao implements CheckDao {
 
     @Override
     public Check create(Check entity) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Check update(Check entity) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void delete(int id) {
-
+        throw new UnsupportedOperationException();
     }
 }

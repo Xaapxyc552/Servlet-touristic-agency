@@ -1,7 +1,6 @@
 package ua.skidchenko.touristic_agency.controller.command.manager;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
-import ua.skidchenko.touristic_agency.service.TourService;
 import ua.skidchenko.touristic_agency.service.client_services.ManagerBookingService;
 
 import javax.servlet.http.HttpServletRequest;

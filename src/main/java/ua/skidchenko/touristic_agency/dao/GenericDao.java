@@ -1,8 +1,6 @@
 package ua.skidchenko.touristic_agency.dao;
 
 
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public interface GenericDao<T> {
 

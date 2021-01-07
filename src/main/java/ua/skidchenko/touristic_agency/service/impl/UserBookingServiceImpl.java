@@ -9,7 +9,6 @@ import ua.skidchenko.touristic_agency.dao.CheckDao;
 import ua.skidchenko.touristic_agency.dao.DaoFactory;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 

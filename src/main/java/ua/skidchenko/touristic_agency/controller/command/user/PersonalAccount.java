@@ -4,16 +4,14 @@ import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.controller.util.MoneyTransformer;
 import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
-import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.User;
+import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 import ua.skidchenko.touristic_agency.service.UserService;
 import ua.skidchenko.touristic_agency.service.client_services.UserBookingService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,7 +42,8 @@ public class PersonalAccount implements Command {
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("pagesSequence", getPagesSequence(checksByUsername.getAmountOfPages()));
         User user = userService.
-                getUserByUsername((String) (request.getSession().getAttribute("username"))).get();
+                getUserByUsername((String) (request.getSession().getAttribute("username")))
+                .orElseThrow(() -> new NotPresentInDatabaseException("User is not present in database"));
         int money = Math.toIntExact(user.getMoney());
         request.setAttribute("money", MoneyTransformer.getInstance().transformToCurrency(money, request));
 

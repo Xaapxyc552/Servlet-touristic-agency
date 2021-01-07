@@ -2,9 +2,6 @@ package ua.skidchenko.touristic_agency.dao.impl;
 
 import ua.skidchenko.touristic_agency.dao.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 public class JDBCDaoFactory extends DaoFactory {
     @Override
