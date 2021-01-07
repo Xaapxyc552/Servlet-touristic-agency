@@ -2,6 +2,7 @@ package ua.skidchenko.touristic_agency.entity;
 
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Check {
@@ -11,13 +12,23 @@ public class Check {
     private User user;
     private Long totalPrice;
     private CheckStatus status;
+    private LocalDateTime creationTime;
+    private LocalDateTime lastModificationTime;
 
-    public Check(Long id, Tour tour, User user, Long totalPrice, CheckStatus status) {
+    public Check(Long id,
+                 Tour tour,
+                 User user,
+                 Long totalPrice,
+                 CheckStatus status,
+                 LocalDateTime creationTime,
+                 LocalDateTime lastModificationTime) {
         this.id = id;
         this.tour = tour;
         this.user = user;
         this.totalPrice = totalPrice;
         this.status = status;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
     }
 
     public Check() {
@@ -70,6 +81,18 @@ public class Check {
         this.status = status;
     }
 
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public LocalDateTime getLastModificationTime() {
+        return lastModificationTime;
+    }
+
+    public void setLastModificationTime(LocalDateTime lastModificationTime) {
+        this.lastModificationTime = lastModificationTime;
+    }
+
     public String toString() {
         return "Check(id=" + this.getId() + ", tour=" + this.getTour() +
                 ", user=" + this.getUser() + ", totalPrice=" + this.getTotalPrice() +
@@ -99,6 +122,8 @@ public class Check {
         private User user;
         private Long totalPrice;
         private CheckStatus status;
+        private LocalDateTime creationTime;
+        private LocalDateTime lastModificationTime;
 
         CheckBuilder() {
         }
@@ -130,13 +155,22 @@ public class Check {
             this.status = status;
             return this;
         }
+        public CheckBuilder creationTime(LocalDateTime creationTime) {
+            this.creationTime = creationTime;
+            return this;
+        }
+        public CheckBuilder lastModificationTime(LocalDateTime lastModificationTime) {
+            this.lastModificationTime = lastModificationTime;
+            return this;
+        }
 
         public Check build() {
-            return new Check(id, tour, user, totalPrice, status);
+            return new Check(id, tour, user, totalPrice, status, creationTime, lastModificationTime);
         }
 
         public String toString() {
-            return "Check.CheckBuilder(id=" + this.id + ", tour=" + this.tour + ", user=" + this.user + ", totalPrice=" + this.totalPrice + ", status=" + this.status + ")";
+            return "Check.CheckBuilder(id=" + this.id + ", tour=" + this.tour + ", user=" + this.user +
+                    ", totalPrice=" + this.totalPrice + ", status=" + this.status + ")";
         }
     }
 }

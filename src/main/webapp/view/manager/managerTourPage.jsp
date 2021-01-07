@@ -18,25 +18,25 @@
     <c:forEach items="${requestScope.get('waitingChecks')}" var="check">
         <tr>
             <th><fmt:message key="check.owner_username"/></th>
-            <th>${check.user.username}</th>
+            <th>${check.userName}</th>
         </tr>
         <tr>
             <th><fmt:message key="check.owner_email"/></th>
-            <th>${check.user.email}</th>
+            <th>${check.userEmail}</th>
         </tr>
         <tr>
             <th><fmt:message key="check.tour_name"/></th>
             <c:if test="${language=='uk-UA'}">
-                <td style="width:200px;">${check.tour.name["uk_UA"]}</td>
+                <td style="width:200px;">${check.tourName["uk_UA"]}</td>
             </c:if>
             <c:if test="${language=='en-GB'}">
-                <td style="width:200px;">${check.tour.name["en_GB"]}</td>
+                <td style="width:200px;">${check.tourName["en_GB"]}</td>
             </c:if>
         </tr>
         <tr>
             <th><fmt:message key="check.total_price"/></th>
             <th>
-                <@commonMacro.showMoneyByLocale check.totalPrice "${requestContext.locale}" dollarCourse/>
+            <td>${check.totalPrice}<fmt:message key="money.sign"/></td>
             </th>
         </tr>
         <tr>

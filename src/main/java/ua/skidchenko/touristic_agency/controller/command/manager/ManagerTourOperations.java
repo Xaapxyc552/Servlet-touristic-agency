@@ -1,6 +1,7 @@
 package ua.skidchenko.touristic_agency.controller.command.manager;
 
 import ua.skidchenko.touristic_agency.controller.command.Command;
+import ua.skidchenko.touristic_agency.controller.util.MoneyTransformer;
 import ua.skidchenko.touristic_agency.dto.CheckDTO;
 import ua.skidchenko.touristic_agency.dto.Page;
 import ua.skidchenko.touristic_agency.service.client_services.ManagerBookingService;
@@ -23,9 +24,15 @@ public class ManagerTourOperations implements Command {
         int currentPage = request.getParameter("currentPage") == null
                 ? 0 : Integer.parseInt(request.getParameter("currentPage"));
         Page<CheckDTO> pagedWaitingChecks = managerBookingService.getPagedWaitingChecks(currentPage);
-        request.setAttribute("waitingChecks",pagedWaitingChecks.getContent());
-        request.setAttribute("currentPage",currentPage);
-        request.setAttribute("pagesSequence",getPagesSequence(pagedWaitingChecks.getAmountOfPages()));
+        pagedWaitingChecks.setContent(pagedWaitingChecks.getContent()
+                .stream()
+                .peek(n -> n.setTotalPrice(
+                        MoneyTransformer.getInstance().transformToCurrency(
+                                Math.toIntExact(Long.parseLong(n.getTotalPrice())), request)))
+                .collect(Collectors.toList()));
+        request.setAttribute("waitingChecks", pagedWaitingChecks.getContent());
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("pagesSequence", getPagesSequence(pagedWaitingChecks.getAmountOfPages()));
         return "/view/manager/managerTourPage.jsp";
     }
 

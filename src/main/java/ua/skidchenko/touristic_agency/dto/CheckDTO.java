@@ -1,26 +1,39 @@
 package ua.skidchenko.touristic_agency.dto;
 
+import ua.skidchenko.touristic_agency.entity.Check;
 import ua.skidchenko.touristic_agency.entity.enums.CheckStatus;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
 public class CheckDTO {
 
     private String id;
-    private Map<String,String> tourName;
+    private Map<String, String> tourName;
     private String userName;
     private String userEmail;
     private String totalPrice;
     private CheckStatus status;
+    private LocalDateTime creationTime;
+    private LocalDateTime lastModificationTime;
 
-    CheckDTO(String id, Map<String, String> tourName, String userName, String userEmail, String totalPrice, CheckStatus status) {
+    CheckDTO(String id,
+             Map<String, String> tourName,
+             String userName,
+             String userEmail,
+             String totalPrice,
+             CheckStatus status,
+             LocalDateTime creationTime,
+             LocalDateTime lastModificationTime) {
         this.id = id;
         this.tourName = tourName;
         this.userName = userName;
         this.userEmail = userEmail;
         this.totalPrice = totalPrice;
         this.status = status;
+        this.creationTime = creationTime;
+        this.lastModificationTime = lastModificationTime;
     }
 
     public static CheckDTOBuilder builder() {
@@ -75,6 +88,22 @@ public class CheckDTO {
         this.status = status;
     }
 
+    public LocalDateTime getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalDateTime creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public LocalDateTime getLastModificationTime() {
+        return lastModificationTime;
+    }
+
+    public void setLastModificationTime(LocalDateTime lastModificationTime) {
+        this.lastModificationTime = lastModificationTime;
+    }
+
     public static class CheckDTOBuilder {
         private String id;
         private Map<String, String> tourName;
@@ -82,6 +111,8 @@ public class CheckDTO {
         private String userEmail;
         private String totalPrice;
         private CheckStatus status;
+        private LocalDateTime creationTime;
+        private LocalDateTime lastModificationTime;
 
         CheckDTOBuilder() {
         }
@@ -116,12 +147,26 @@ public class CheckDTO {
             return this;
         }
 
+        public CheckDTOBuilder creationTime(LocalDateTime creationTime) {
+            this.creationTime = creationTime;
+            return this;
+        }
+
+        public CheckDTOBuilder lastModificationTime(LocalDateTime lastModificationTime) {
+            this.lastModificationTime = lastModificationTime;
+            return this;
+        }
+
+
         public CheckDTO build() {
-            return new CheckDTO(id, tourName, userName, userEmail, totalPrice, status);
+            return new CheckDTO(id, tourName, userName, userEmail, totalPrice, status, creationTime, lastModificationTime);
         }
 
         public String toString() {
-            return "CheckDTO.CheckDTOBuilder(id=" + this.id + ", tourName=" + this.tourName + ", userName=" + this.userName + ", userEmail=" + this.userEmail + ", totalPrice=" + this.totalPrice + ", status=" + this.status + ")";
+            return "CheckDTO.CheckDTOBuilder(id=" + this.id + ", tourName=" + this.tourName + ", userName=" +
+                    this.userName + ", userEmail=" + this.userEmail + ", totalPrice=" + this.totalPrice + ", status=" +
+                    this.status + ")";
         }
+
     }
 }

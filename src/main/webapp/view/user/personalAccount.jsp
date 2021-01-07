@@ -8,7 +8,6 @@
 <fmt:setBundle basename="messages"/>
 
 
-
 <jsp:include page="../common/common.jsp"/>
 
 <fmt:message key="personal_page.firstname"/>${sessionScope.get('firstname')}<br>
@@ -16,7 +15,7 @@
 <fmt:message key="personal_page.username"/>${sessionScope.get('username')}<br>
 <fmt:message key="personal_page.role"/>${sessionScope.get('role')}<br>
 <fmt:message key="personal_page.money"/>${requestScope.get('money')} <fmt:message key="money.sign"/><br>
-<c:if test="${isAmountOfChargeNotCorrect=='true'}" >
+<c:if test="${isAmountOfChargeNotCorrect=='true'}">
     <fmt:message key="personal_page.amount_of_recharge.error"/>
 </c:if>
 
@@ -31,7 +30,6 @@
 <c:set var="hrefForPagination" value="/app/user/personal-account"/>
 <c:set var="currentPage" value="${requestScope.get('currentPage')}"/>
 <jsp:include page="../common/pagingMacros.jsp"/>
-
 
 
 <table>
@@ -56,18 +54,54 @@
             <th><fmt:message key="check.status"/></th>
             <th><fmt:message key="check.status.${check.status.status}"/></th>
         </tr>
-        <c:if test="${check.status.status.name()=='WAITING_FOR_CONFIRM'}">
-            <tr>
-                <th>
-                    <form action="/app/user/remove-booking" method="post">
-                            <%--                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
-                        <input type="hidden" name="check_id" value="${check.id}"/>
-                        <input type="submit" value="<fmt:message key="check.remove"/>">
+        <tr>
+            <th><fmt:message key="check.booked_time"/></th>
+            <th>
+                <fmt:parseDate value="${check.creationTime}" pattern="y-M-dd'T'H:m" var="creationTime"/>
+                <fmt:formatDate value="${creationTime}" pattern="yyyy.MM.dd HH:mm"/>
+            </th>
+        </tr>
+        <c:choose>
+            <c:when test="${check.status.status.name()=='WAITING_FOR_CONFIRM'}">
+                <tr>
+                    <th>
+                        <form action="${pageContext.request.contextPath}/app/user/remove-booking" method="post">
+                                <%--                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>--%>
+                            <input type="hidden" name="check_id" value="${check.id}"/>
+                            <input type="submit" value="<fmt:message key="check.remove"/>">
 
-                    </form>
-                </th>
-            </tr>
-        </c:if>
+                        </form>
+                    </th>
+                </tr>
+            </c:when>
+            <c:when test="${check.status.status.name()=='CANCELED'}">
+                <tr>
+                    <th><fmt:message key="check.canceled_time"/></th>
+                    <th>
+                        <fmt:parseDate value="${check.lastModificationTime}" pattern="y-M-dd'T'H:m" var="canceledTime"/>
+                        <fmt:formatDate value="${canceledTime}" pattern="yyyy.MM.dd HH:mm"/>
+                    </th>
+                </tr>
+            </c:when>
+            <c:when test="${check.status.status.name()=='CONFIRMED'}">
+                <tr>
+                    <th><fmt:message key="check.confirmed_time"/></th>
+                    <th>
+                        <fmt:parseDate value="${check.lastModificationTime}" pattern="y-M-dd'T'H:m" var="confirmedTime"/>
+                        <fmt:formatDate value="${confirmedTime}" pattern="yyyy.MM.dd HH:mm"/>
+                    </th>
+                </tr>
+            </c:when>
+            <c:when test="${check.status.status.name()=='DECLINED'}">
+                <tr>
+                    <th><fmt:message key="check.declined_time"/></th>
+                    <th>
+                        <fmt:parseDate value="${check.lastModificationTime}" pattern="y-M-dd'T'H:m" var="declinedTime"/>
+                        <fmt:formatDate value="${declinedTime}" pattern="yyyy.MM.dd HH:mm"/>
+                    </th>
+                </tr>
+            </c:when>
+        </c:choose>
         <tr>
             <th><br></th>
         </tr>

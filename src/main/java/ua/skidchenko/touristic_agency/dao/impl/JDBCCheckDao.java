@@ -17,6 +17,7 @@ import ua.skidchenko.touristic_agency.exceptions.NotPresentInDatabaseException;
 import ua.skidchenko.touristic_agency.exceptions.UserHasNoMoneyException;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class JDBCCheckDao implements CheckDao {
@@ -39,6 +40,8 @@ public class JDBCCheckDao implements CheckDao {
                     "       check_status.status as check_status," +
                     "       checks.id           as check_id," +
                     "       checks.user_id," +
+                    "       checks.creation_time," +
+                    "       checks.modified_time," +
                     "       users.role," +
                     "       users.enabled," +
                     "       users.email," +
@@ -80,7 +83,9 @@ public class JDBCCheckDao implements CheckDao {
                     "       check_status.status as check_status," +
                     "       checks.id           as check_id," +
                     "       users.email," +
-                    "       users.username " +
+                    "       users.username, " +
+                    "       checks.creation_time," +
+                    "       checks.modified_time" +
                     " from touristic_agency.tour main_tour " +
                     "         join touristic_agency.name_translation_mapping nameukr on nameukr.name_id = main_tour.id" +
                     "    and nameukr.lang_code = 'uk_UA'" +
@@ -179,15 +184,15 @@ public class JDBCCheckDao implements CheckDao {
                     "         FROM touristic_agency.tour" +
                     "         WHERE id = ?" +
                     "         limit 1) " +
-                    "insert into touristic_agency.check (total_price, status_id, tour_id, user_id)" +
+                    "insert into touristic_agency.check (total_price, status_id, tour_id, user_id,creation_time)" +
                     "VALUES ((Select max(temp_tour_price.price) from temp_tour_price), 1, ?," +
-                    "        (Select max(user_retrieved_id.id) from user_retrieved_id));" +
+                    "        (Select max(user_retrieved_id.id) from user_retrieved_id), ?);" +
                     "commit;";
 
     private static final String CANCEL_BOOKING_BY_ID =
             "begin;" +
                     "update touristic_agency.\"check\"" +
-                    "set status_id=4 " +
+                    "set status_id=4, modified_time=? " +
                     "where id = ?" +
                     "  AND status_id = 1;" +
                     "" +
@@ -233,6 +238,8 @@ public class JDBCCheckDao implements CheckDao {
                     "       check_status.status as check_status," +
                     "       checks.id           as check_id," +
                     "       checks.user_id," +
+                    "       checks.creation_time," +
+                    "       checks.modified_time," +
                     "       users.role," +
                     "       users.enabled," +
                     "       users.email," +
@@ -266,7 +273,7 @@ public class JDBCCheckDao implements CheckDao {
     private static final String DECLINE_BOOKING_BY_ID =
             "begin;" +
                     "update touristic_agency.\"check\"" +
-                    "set status_id=3 " +
+                    "set status_id=3, modified_time=?  " +
                     "where id = ?" +
                     "  AND status_id = 1;" +
                     "" +
@@ -299,7 +306,7 @@ public class JDBCCheckDao implements CheckDao {
     public static final String CONFIRM_BOOKING_BY_ID =
             "begin;" +
                     "update touristic_agency.\"check\"" +
-                    "set status_id=2 " +
+                    "set status_id=2, modified_time=?  " +
                     "where id = ?" +
                     "  AND status_id = 1;" +
                     "" +
@@ -435,6 +442,7 @@ public class JDBCCheckDao implements CheckDao {
             ps.setString(5, username);
             ps.setLong(6, tourId);
             ps.setLong(7, tourId);
+            ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             ps.executeUpdate();
         } catch (SQLException e) {
             switch (e.getSQLState()){
@@ -450,10 +458,11 @@ public class JDBCCheckDao implements CheckDao {
     public void cancelBookingByCheckId(Long checkId) {
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(CANCEL_BOOKING_BY_ID)) {
-            ps.setLong(1, checkId);
+            ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setLong(2, checkId);
             ps.setLong(3, checkId);
             ps.setLong(4, checkId);
+            ps.setLong(5, checkId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -464,10 +473,11 @@ public class JDBCCheckDao implements CheckDao {
     public void declineBookingById(Long checkId) {
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(DECLINE_BOOKING_BY_ID)) {
-            ps.setLong(1, checkId);
+            ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setLong(2, checkId);
             ps.setLong(3, checkId);
             ps.setLong(4, checkId);
+            ps.setLong(5, checkId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -478,8 +488,9 @@ public class JDBCCheckDao implements CheckDao {
     public void confirmBookingByCheckId(Long checkId) {
         try (Connection connection = ConnectionPool.getConnection();
              PreparedStatement ps = connection.prepareStatement(CONFIRM_BOOKING_BY_ID)) {
-            ps.setLong(1, checkId);
+            ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setLong(2, checkId);
+            ps.setLong(3, checkId);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
