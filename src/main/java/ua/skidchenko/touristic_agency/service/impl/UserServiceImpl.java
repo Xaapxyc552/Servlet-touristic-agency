@@ -3,6 +3,7 @@ package ua.skidchenko.touristic_agency.service.impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mindrot.jbcrypt.BCrypt;
 import ua.skidchenko.touristic_agency.dto.UserDTO;
 import ua.skidchenko.touristic_agency.entity.enums.Role;
 import ua.skidchenko.touristic_agency.entity.User;
@@ -10,7 +11,6 @@ import ua.skidchenko.touristic_agency.service.UserService;
 
 import java.util.Optional;
 
-//@Log4j2
 public class UserServiceImpl extends UserService {
 
     private static final Logger log = LogManager.getLogger(UserServiceImpl.class.getName());
@@ -34,11 +34,7 @@ public class UserServiceImpl extends UserService {
     private User buildUserFromDTO(UserDTO userDTO) {
         log.info("Building new user from userDTO. UserDTO:{}", userDTO);
         return User.builder()
-                .password(
-                        //TODO подключить пассворд энкоер BCrypt
-                        //passwordEncoder.encode(userDTO.getPassword())
-                        userDTO.getPassword()
-                )
+                .password(BCrypt.hashpw(userDTO.getPassword(),BCrypt.gensalt()))
                 .firstname(userDTO.getFirstname())
                 .role(Role.ROLE_USER)
                 .email(userDTO.getEmail())

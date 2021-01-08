@@ -43,21 +43,25 @@ public class Tour {
     }
 
     public static Tour buildTourFromTourDTO(TourDTO tourDTO) {
-        return Tour.builder()
+        TourBuilder build = Tour.builder()
                 .tourStatus(TourStatus.WAITING)
                 .hotelType(tourDTO.getHotelType())
                 .description(tourDTO.getDescription())
                 .price(Long.valueOf(tourDTO.getPrice()))
                 .name(tourDTO.getName())
                 .amountOfPersons(
-                        Integer.parseInt(tourDTO.getAmountOfPersons())
-                )
-                .id(Long.valueOf(tourDTO.getId()))
-                .burning(Boolean.parseBoolean(tourDTO.getBurning()))
+                        Integer.parseInt(tourDTO.getAmountOfPersons()))
                 .tourTypes(
                         TourType.getTourTypesFromStringList(tourDTO.getTourTypes()
-                        )
-                ).build();
+                        ));
+
+        if (tourDTO.getId() !=null) {
+            build.id(Long.valueOf(tourDTO.getId()));
+        }
+        if (tourDTO.getBurning()!=null){
+            build .burning(Boolean.parseBoolean(tourDTO.getBurning()));
+        }
+        return build.build();
     }
 
     public static TourBuilder builder() {

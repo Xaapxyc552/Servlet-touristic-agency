@@ -1,5 +1,6 @@
 package ua.skidchenko.touristic_agency.controller.command.guest;
 
+import org.mindrot.jbcrypt.BCrypt;
 import ua.skidchenko.touristic_agency.controller.command.Command;
 import ua.skidchenko.touristic_agency.entity.User;
 import ua.skidchenko.touristic_agency.service.UserService;
@@ -23,7 +24,7 @@ public class Login implements Command {
             return "/view/login.jsp";
         }
         Optional<User> userByUsername = userService.getUserByUsername(username);
-        if (userByUsername.isPresent() && userByUsername.get().getPassword().equals(password)) {
+        if (userByUsername.isPresent() && BCrypt.checkpw(password,userByUsername.get().getPassword())) {
             User user = userByUsername.get();
             request.getSession().setAttribute("username", user.getUsername());
             request.getSession().setAttribute("firstname", user.getFirstname());
